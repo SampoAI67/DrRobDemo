@@ -1,74 +1,81 @@
 # Concept di redesign · Dott. Roberto Dell'Avanzato
 
-Proposta di rifacimento per `dellavanzatoroberto.it`, medicina e chirurgia estetica,
-Milano ed Erbusco.
+Rifacimento di [dellavanzatoroberto.it](https://www.dellavanzatoroberto.it/) — medicina e
+chirurgia estetica, Milano — con i contenuti e le fotografie del sito originale
+riorganizzati in un sito statico bilingue.
 
 > **Non è il sito ufficiale del Dott. Dell'Avanzato.** È un concept non commissionato,
-> pubblicato con `noindex` e con l'indicazione esplicita in fondo alla pagina.
+> pubblicato in `noindex` e con l'indicazione esplicita nel footer di ogni pagina.
+> Testi e immagini appartengono ai legittimi proprietari.
 
-Il sistema di design, con il ragionamento dietro ogni scelta, è in
-[`design-system.md`](design-system.md).
+---
+
+## Cosa cambia rispetto all'originale
+
+| Problema dell'originale | Come è risolto qui |
+|---|---|
+| Le tre pagine dei macro-servizi ripetono lo stesso blocco immagine + testo, con font piccoli | Ritmo editoriale: hero asimmetrico, blocchi alternati, corpo del testo a 17px su misura di 68 caratteri |
+| «Come vorresti valorizzarti?»: oltre 200 trattamenti in bullet su due colonne | **Selettore per zona del corpo**: si sceglie la zona, restano solo i trattamenti che la riguardano. Stato nella query string, quindi condivisibile |
+| L'elenco degli interventi chirurgici è un muro di testo | Fisarmonica su `<details>`, animata dove il browser lo permette, funzionante anche senza JavaScript |
+| Nessuna versione inglese | IT su root, EN sotto `/en` con slug tradotti, `hreflang` e switch in ogni pagina |
+| Pagina contatti spoglia, mappa centrata sul quartiere | Riquadro con indirizzo, riferimenti d'accesso e pin sul civico; la mappa interattiva (OpenStreetMap, nessun cookie) si carica solo al clic |
+| Form unico e generico | Richiesta di visita in quattro passi: interesse → zona → tempistica → contatti |
+| Nessun dato strutturato | `Physician` + `MedicalClinic`, `MedicalProcedure` sulle pagine flagship, `FAQPage` su ogni sezione con domande |
+| Contenuti non aggiornati (orari «settembre 2025», e-mail `@hotmail.it`) | Segnaposto espliciti: i dati da confermare non vengono inventati |
+
+Endolift® — la metodica che il Dott. Dell'Avanzato ha sviluppato dal 2005 — passa da
+essere un post fra gli altri ad avere un blocco dedicato in home e una pagina di
+approfondimento.
+
+Niente foto prima/dopo, recensioni, prezzi o promesse di risultato: la pubblicità
+sanitaria in Italia (L. 145/2018, art. 1 commi 525-536) ammette solo comunicazione
+informativa. Al loro posto c'è un **trust wall** di fatti verificabili: cattedre,
+società scientifiche, premi, missioni umanitarie, numero di iscrizione all'Ordine.
 
 ---
 
 ## Stack
 
-HTML, CSS e ~50 righe di JavaScript. Nessuna dipendenza, nessun build step, nessuna
-richiesta di rete a runtime: i font sono self-hosted, quindi nessun IP del visitatore
-raggiunge Google.
+Next.js 16 (App Router) · TypeScript · Tailwind v4 · export statico, nessun backend.
 
 ```
-index.html            una pagina, 10 sezioni
-styles.css            token + 16 blocchi commentati
-fonts.css             @font-face self-hosted
-main.js               reveal on scroll, filetto header, anno
-design-system.md      il sistema e il perché delle scelte di settore
-assets/fonts/         Cormorant Garamond + Montserrat (variable, latin + latin-ext)
-assets/og-image.jpg   1200×630, generata da assets/og-source.html
-tools/make-og.mjs     rigenera l'og-image con Playwright
+app/(it)/            rotte italiane, root layout con lang="it"
+app/(en)/en/         rotte inglesi, root layout con lang="en"
+views/               una vista per pagina, condivisa fra le due lingue
+components/          guscio, sezioni editoriali, moduli interattivi
+content/             tutti i testi, in italiano e inglese affiancati
+lib/                 rotte, i18n, metadata
+tools/fetch-images.mjs  scarica le immagini originali e le converte in WebP
 ```
 
-## Anteprima locale
+I contenuti stanno tutti in `content/`, con le due lingue una accanto all'altra: se
+cambia l'italiano si vede subito cosa va tradotto.
+
+## Sviluppo
 
 ```bash
-npx http-server -p 8099 -s .
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # export statico in out/
 ```
 
-## Qualità
+## Immagini
 
-| Controllo | Esito |
-|---|---|
-| axe-core wcag2a/2aa, wcag21a/21aa, best-practice | 0 violazioni, 36 passes |
-| Contrasto di tutte le coppie di token | ≥ 4.5:1, verificato in light e dark |
-| Touch target | nessuno sotto 44px |
-| Overflow orizzontale @1440 / @390 | nessuno |
-| `prefers-reduced-motion` | rispettato |
-| Senza JavaScript | pagina interamente leggibile |
+Le fotografie sono quelle del sito originale. Non stanno nel repository come file
+sorgente: `content/images.json` elenca i 44 URL originali con l'alt in due lingue, e il
+workflow **Fetch immagini originali** (`.github/workflows/fetch-assets.yml`, esecuzione
+manuale) le scarica, genera le varianti WebP a 480/960/1600 px in `public/media/` e le
+committa. `npm run fetch:images` fa la stessa cosa in locale.
 
----
+## Deploy
 
-## Provenienza dei contenuti
+Il workflow **Deploy su GitHub Pages** builda con `BASE_PATH=/DrRobDemo` e pubblica
+`out/`. Per il form, impostare il segreto `W3F_ACCESS_KEY` (Web3Forms): senza chiave il
+modulo ripiega su un `mailto:` già compilato e resta comunque utilizzabile.
 
-Il sito originale non è stato raggiungibile durante la costruzione. Tutti i dati in pagina
-provengono da fonti pubbliche di terze parti (SICPRE, Casa di Cura La Madonnina / Gruppo
-San Donato, Ultherapy.it, TuaMe, MioDottore, TopDoctors), raccolte il 2026-07-25, e
-**vanno verificati con il diretto interessato** prima di qualsiasi uso.
+## Da confermare con il diretto interessato
 
-Non compaiono in pagina, per scelta: recensioni, testimonianze, prezzi, percentuali di
-successo, promesse di risultato, foto prima/dopo, numeri di telefono. Dove il dato manca,
-la pagina scrive «da inserire».
-
-I testi sono in registro informativo e non promozionale, come richiesto dall'art. 1
-commi 525-536 della L. 145/2018 sulla pubblicità sanitaria.
-
-### Da completare prima di un eventuale go-live
-
-- [ ] Ritratto clinico reale nel segnaposto dell'hero (4:5, ≥1200px, AVIF/WebP < 200 kB)
-- [ ] Numero di telefono dello studio
-- [ ] P. IVA e direttore sanitario nel footer
-- [ ] Verifica di ogni dato numerico e di ogni trattamento elencato
-- [ ] Conferma delle quattro risposte in «Domande frequenti»: sono organizzative e
-      plausibili, ma descrivono una prassi di studio da confermare
+- [ ] Orari di studio (l'originale riporta ancora «apertura ultima settimana di settembre 2025»)
+- [ ] Indirizzo e-mail di contatto pubblico
 - [ ] Privacy policy e cookie policy
-- [ ] Rimozione di `<meta name="robots" content="noindex, nofollow">` e della riga
-      «Concept di redesign» nel footer
+- [ ] Verifica di ogni dato numerico e di ogni trattamento elencato

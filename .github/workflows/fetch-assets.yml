@@ -1,0 +1,42 @@
+name: Fetch immagini originali
+
+# L'ambiente dell'agente non ha egress verso dellavanzatoroberto.it: le immagini
+# le scarica il runner GitHub, che poi le committa sul branch corrente.
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Riscarica anche le immagini già presenti"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installa sharp
+        run: npm install --no-audit --no-fund sharp@^0.35.3
+
+      - name: Scarica e converte le immagini
+        run: node tools/fetch-images.mjs ${{ inputs.force && '--force' || '' }}
+
+      - name: Committa gli asset
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/media content/images.lock.json
+          if git diff --staged --quiet; then
+            echo "Nessuna immagine nuova."
+          else
+            git commit -m "chore: immagini originali scaricate e convertite in WebP responsive"
+            git push
+          fi
