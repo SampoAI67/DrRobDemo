@@ -2,9 +2,9 @@ name: Deploy su GitHub Pages
 
 on:
   push:
-    # il branch di lavoro pubblica la demo prima del merge: serve un link
-    # condivisibile per l'outreach
-    branches: [main, claude/surgeon-website-redesign-ok7yit]
+    # solo dal branch di default: l'ambiente github-pages rifiuta i deploy
+    # provenienti da altri branch (regola di protezione predefinita)
+    branches: [main]
   workflow_dispatch:
 
 permissions:
