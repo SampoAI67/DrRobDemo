@@ -1,0 +1,403 @@
+{
+  "hero-home-1": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-home-2": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-home-3": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "bio-home": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "home-chirurgia": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "home-chirurgia-2": {
+    "width": 480,
+    "height": 483,
+    "widths": [
+      480
+    ],
+    "ratio": 0.9938
+  },
+  "home-advanced": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "missioni": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  },
+  "logo": {
+    "width": 480,
+    "height": 125,
+    "widths": [
+      480
+    ],
+    "ratio": 3.84
+  },
+  "logo-footer": {
+    "width": 250,
+    "height": 105,
+    "widths": [
+      250
+    ],
+    "ratio": 2.381
+  },
+  "loghi-societa": {
+    "width": 437,
+    "height": 66,
+    "widths": [
+      437
+    ],
+    "ratio": 6.6212
+  },
+  "hero-chi-sono": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "chi-sono-1": {
+    "width": 960,
+    "height": 724,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.326
+  },
+  "chi-sono-2": {
+    "width": 960,
+    "height": 724,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.326
+  },
+  "chi-sono-3": {
+    "width": 960,
+    "height": 749,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.2817
+  },
+  "chi-sono-4": {
+    "width": 960,
+    "height": 724,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.326
+  },
+  "hero-medicina-1": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-medicina-2": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-medicina-3": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "t-ultherapy": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-botulino": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-filler": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-endolift": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-fili": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-profhilo": {
+    "width": 960,
+    "height": 960,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1
+  },
+  "hero-chirurgia-1": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-chirurgia-2": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "hero-chirurgia-3": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "t-liposcultura": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-mastoplastica": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-blefaroplastica": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-rinosettoplastica": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-cellfina": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "hero-advanced": {
+    "width": 960,
+    "height": 403,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3821
+  },
+  "t-face-rebuilding": {
+    "width": 960,
+    "height": 1440,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 0.6667
+  },
+  "t-body-reshaping": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  },
+  "t-bio-nutri-knees": {
+    "width": 960,
+    "height": 415,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 2.3133
+  },
+  "t-teosyalpen": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-buttock": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  },
+  "t-nanosoft": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-ladylift": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "t-permalip": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  },
+  "post-endolift": {
+    "width": 960,
+    "height": 615,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.561
+  },
+  "post-ultherapy": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  },
+  "post-cellfina": {
+    "width": 960,
+    "height": 640,
+    "widths": [
+      480,
+      960
+    ],
+    "ratio": 1.5
+  }
+}
