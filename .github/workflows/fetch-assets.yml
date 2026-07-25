@@ -9,6 +9,13 @@ on:
         description: "Riscarica anche le immagini già presenti"
         type: boolean
         default: false
+  # gira anche quando cambia il manifest, così le immagini nuove arrivano da sole
+  # (workflow_dispatch è disponibile solo dal branch di default)
+  push:
+    paths:
+      - "content/images.json"
+      - "tools/fetch-images.mjs"
+      - ".github/workflows/fetch-assets.yml"
 
 permissions:
   contents: write
