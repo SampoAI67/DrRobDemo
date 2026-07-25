@@ -41,7 +41,7 @@ export function HomeView({ locale }: { locale: Locale }) {
         <PullQuote cite="Dr. Roberto Dell'Avanzato">{home.quote[locale]}</PullQuote>
       </Section>
 
-      <Split locale={locale} image="bio-home" kicker={home.role[locale]} title={home.heroTitle[locale]} flip>
+      <Split locale={locale} image="bio-home" kicker={home.bioKicker[locale]} title={home.role[locale]} flip>
         <p>{home.bio[locale]}</p>
         <p>
           {locale === "it"
@@ -68,7 +68,7 @@ export function HomeView({ locale }: { locale: Locale }) {
                 <Media
                   id={area.image}
                   locale={locale}
-                  ratio="4/3"
+                  ratio="3/2"
                   sizes="(min-width: 768px) 32vw, 100vw"
                   className="transition-transform duration-500 group-hover:scale-[1.01]"
                 />
@@ -114,7 +114,8 @@ export function HomeView({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <Split locale={locale} image="missioni" kicker={home.missionsLead[locale]} title={home.missionsTitle[locale]}>
+      <Split locale={locale} image="missioni" kicker={home.missionsKicker[locale]} title={home.missionsTitle[locale]}>
+        <p className="!text-ink">{home.missionsLead[locale]}</p>
         {humanitarian.map((item, i) => (
           <p key={i}>{item[locale]}</p>
         ))}

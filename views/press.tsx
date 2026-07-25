@@ -17,7 +17,8 @@ export function PressView({ locale }: { locale: Locale }) {
         title={copy.title[locale]}
         lead={copy.lead[locale]}
         image="chi-sono-4"
-        align="left"
+        imageRatio="16/9"
+        imagePosition="center 30%"
       />
 
       <Section labelledBy="stampa">

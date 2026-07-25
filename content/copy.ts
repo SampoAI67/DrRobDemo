@@ -9,16 +9,29 @@ export interface NavItem {
   /** rotta senza prefisso di lingua */
   href: string;
   label: Record<Locale, string>;
+  /** etichetta accorciata per la barra desktop, dove lo spazio è finito */
+  short?: Record<Locale, string>;
+  /**
+   * Voci della barra desktop. Sette non ci stanno senza rimpicciolire il testo
+   * fino a renderlo illeggibile: le due secondarie restano nel menu mobile,
+   * nel footer e nei rimandi dalle pagine.
+   */
+  primary?: boolean;
 }
 
 export const nav: NavItem[] = [
-  { href: "/its-me", label: { it: "Chi sono", en: "About" } },
-  { href: "/medicina-estetica", label: { it: "Medicina estetica", en: "Aesthetic medicine" } },
-  { href: "/chirurgia-estetica", label: { it: "Chirurgia estetica", en: "Aesthetic surgery" } },
-  { href: "/advanced-beauty-technology", label: { it: "Advanced beauty technology", en: "Advanced beauty technology" } },
+  { href: "/its-me", primary: true, label: { it: "Chi sono", en: "About" } },
+  { href: "/medicina-estetica", primary: true, label: { it: "Medicina estetica", en: "Aesthetic medicine" } },
+  { href: "/chirurgia-estetica", primary: true, label: { it: "Chirurgia estetica", en: "Aesthetic surgery" } },
+  {
+    href: "/advanced-beauty-technology",
+    primary: true,
+    label: { it: "Advanced beauty technology", en: "Advanced beauty technology" },
+    short: { it: "Beauty technology", en: "Beauty technology" },
+  },
   { href: "/rassegna-stampa", label: { it: "Riconoscimenti", en: "Recognition" } },
   { href: "/corsi-di-formazione", label: { it: "Formazione", en: "Teaching" } },
-  { href: "/contatti", label: { it: "Contatti", en: "Contact" } },
+  { href: "/contatti", primary: true, label: { it: "Contatti", en: "Contact" } },
 ];
 
 export const ui = {
@@ -64,9 +77,11 @@ export const home = {
     en: "Just when I think I have gone as far as I can, I discover I can go further still",
   },
   role: {
-    it: "Specialista in chirurgia, medicina estetica e chirurgia estetica",
+    it: "Specialista in chirurgia, medicina e chirurgia estetica",
     en: "Specialist in surgery, aesthetic medicine and aesthetic surgery",
   },
+  bioKicker: { it: "Il medico", en: "The physician" },
+  missionsKicker: { it: "Fuori dallo studio", en: "Beyond the practice" },
   bio: {
     it: "Sono il Dr. Roberto Dell'Avanzato, uno dei chirurghi estetici più conosciuti in Italia e considerato uno dei massimi esperti di medical device e tecnologie laser al mondo. Mi occupo di medicina e chirurgia estetica da oltre venticinque anni e ho ideato la moderna tecnica Endolift® Laser, presentata da me per la prima volta al mondo.",
     en: "I am Dr Roberto Dell'Avanzato, one of the best-known aesthetic surgeons in Italy and regarded as one of the world's leading experts in medical devices and laser technology. I have worked in aesthetic medicine and surgery for over twenty-five years and created the modern Endolift® Laser technique, which I was the first in the world to present.",

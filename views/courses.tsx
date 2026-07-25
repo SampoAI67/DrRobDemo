@@ -15,7 +15,8 @@ export function CoursesView({ locale }: { locale: Locale }) {
         title={copy.title[locale]}
         lead={copy.lead[locale]}
         image="chi-sono-3"
-        align="left"
+        imageRatio="16/9"
+        imagePosition="center 30%"
       />
 
       <Section labelledBy="docenze">

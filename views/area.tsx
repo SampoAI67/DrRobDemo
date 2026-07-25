@@ -30,7 +30,6 @@ export function AreaView({ area, locale }: { area: Area; locale: Locale }) {
         title={copy.title[locale]}
         lead={copy.lead[locale]}
         image={hero}
-        align="left"
       >
         {"note" in copy && <p className="max-w-[52ch] border-l-2 border-gold-bright pl-5 text-ink-soft">{copy.note[locale]}</p>}
       </PageHero>

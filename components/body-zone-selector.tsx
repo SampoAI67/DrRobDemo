@@ -54,7 +54,7 @@ export function BodyZoneSelector({ locale }: { locale: Locale }) {
                 >
                   <Icon size={17} aria-hidden className="flex-none" />
                   <span className="flex-1">{z.name[locale]}</span>
-                  <span className="text-xs tabular-nums opacity-60">{z.procedures.length}</span>
+                  <span className="text-xs tabular-nums">{z.procedures.length}</span>
                 </button>
               </li>
             );

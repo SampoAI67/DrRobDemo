@@ -29,9 +29,11 @@ export function Section({
 }
 
 /**
- * Hero editoriale: foto a piena altezza su un lato, colonna di testo stretta
- * sull'altro. Sostituisce lo slider a tutta larghezza del sito originale, dove
- * il testo galleggiava sopra l'immagine ed era il primo elemento a perdersi.
+ * Apertura editoriale: prima il titolo e la chiamata all'azione, poi la foto a
+ * tutta larghezza nelle sue proporzioni reali. Le immagini di testata
+ * dell'originale sono banner 2.38:1 e sotto ci galleggiava il testo, che era la
+ * prima cosa a perdersi; qui l'H1 e il pulsante stanno sempre sopra la piega e
+ * la fotografia non viene ritagliata per entrare in un box deciso a priori.
  */
 export function PageHero({
   locale,
@@ -39,7 +41,8 @@ export function PageHero({
   title,
   lead,
   image,
-  align = "right",
+  imagePosition,
+  imageRatio,
   children,
 }: {
   locale: Locale;
@@ -47,29 +50,33 @@ export function PageHero({
   title: string;
   lead?: string;
   image: string;
-  align?: "left" | "right";
+  imagePosition?: string;
+  imageRatio?: string;
   children?: ReactNode;
 }) {
   return (
     <section className="border-b border-line">
-      <div className={`grid lg:grid-cols-2 ${align === "left" ? "" : "lg:[&>*:first-child]:order-2"}`}>
-        <div className="flex items-center px-5 py-16 sm:px-8 lg:px-14 lg:py-24">
-          <div className="max-w-xl">
+      <div className="mx-auto max-w-[84rem] px-5 pb-12 pt-14 sm:px-8 lg:pb-16 lg:pt-20">
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
+          <div>
             <p className="kicker">{kicker}</p>
-            <h1 className="mt-6 text-[clamp(2.6rem,6vw,4.6rem)]">{title}</h1>
-            {lead && <p className="mt-7 max-w-[52ch] text-lg leading-relaxed text-ink-soft">{lead}</p>}
-            {children && <div className="mt-9">{children}</div>}
+            <h1 className="mt-6 text-[clamp(2.6rem,6.4vw,5rem)]">{title}</h1>
+          </div>
+          <div>
+            {lead && <p className="max-w-[52ch] text-lg leading-relaxed text-ink-soft">{lead}</p>}
+            {children && <div className="mt-8">{children}</div>}
           </div>
         </div>
-        <Media
-          id={image}
-          locale={locale}
-          priority
-          ratio="4/5"
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="min-h-[22rem] lg:h-full lg:min-h-[34rem]"
-        />
       </div>
+      <Media
+        id={image}
+        locale={locale}
+        priority
+        ratio={imageRatio}
+        position={imagePosition}
+        sizes="100vw"
+        className="max-h-[min(62vh,34rem)] w-full"
+      />
     </section>
   );
 }
@@ -99,14 +106,13 @@ export function Split({
           <Media
             id={image}
             locale={locale}
-            ratio="5/4"
             sizes="(min-width: 1024px) 46vw, 100vw"
             className="shadow-[0_1px_0_0_var(--color-line)]"
           />
         </Reveal>
         <Reveal delay={90}>
           {kicker && <p className="kicker">{kicker}</p>}
-          <h3 className="mt-5 text-[clamp(1.7rem,3.2vw,2.6rem)]">{title}</h3>
+          <h2 className="mt-5 text-[clamp(1.7rem,3.2vw,2.6rem)]">{title}</h2>
           <div className="prose-editorial mt-6 text-ink-soft">{children}</div>
         </Reveal>
       </div>
@@ -133,7 +139,7 @@ export function PullQuote({ children, cite }: { children: ReactNode; cite?: stri
       <blockquote className="font-display text-[clamp(1.6rem,3.6vw,2.9rem)] leading-[1.2]">
         &laquo;{children}&raquo;
       </blockquote>
-      {cite && <figcaption className="mt-6 text-sm uppercase tracking-[0.18em] text-ink-soft">{cite}</figcaption>}
+      {cite && <figcaption className="mt-6 text-sm uppercase tracking-[0.18em] text-paper/75">{cite}</figcaption>}
     </figure>
   );
 }

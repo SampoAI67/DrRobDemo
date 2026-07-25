@@ -23,7 +23,6 @@ export function ItsMeView({ locale }: { locale: Locale }) {
         title={copy.title[locale]}
         lead={copy.body[locale][0]}
         image="hero-chi-sono"
-        align="left"
       />
 
       <Section>
@@ -44,7 +43,7 @@ export function ItsMeView({ locale }: { locale: Locale }) {
         <div className="grid grid-cols-2 gap-3 py-16 lg:grid-cols-4">
           {gallery.map((id, i) => (
             <Reveal key={id} delay={i * 70}>
-              <Media id={id} locale={locale} ratio="4/5" sizes="(min-width: 1024px) 23vw, 45vw" />
+              <Media id={id} locale={locale} sizes="(min-width: 1024px) 23vw, 45vw" />
             </Reveal>
           ))}
         </div>

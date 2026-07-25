@@ -2,7 +2,9 @@ name: Deploy su GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # il branch di lavoro pubblica la demo prima del merge: serve un link
+    # condivisibile per l'outreach
+    branches: [main, claude/surgeon-website-redesign-ok7yit]
   workflow_dispatch:
 
 permissions:

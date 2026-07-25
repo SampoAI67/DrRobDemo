@@ -48,9 +48,8 @@ export function ArticleView({ id, locale }: { id: string; locale: Locale }) {
             id={article.image}
             locale={locale}
             priority
-            ratio="21/9"
             sizes="100vw"
-            className="max-h-[32rem] w-full"
+            className="max-h-[min(58vh,30rem)] w-full"
           />
         </header>
 

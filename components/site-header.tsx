@@ -46,7 +46,13 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
   const items = nav.map((item) => {
     const id = navIds[item.href];
-    return { label: item.label[locale], href: href(id, locale), active: current?.route.id === id };
+    return {
+      primary: item.primary === true,
+      label: item.label[locale],
+      short: (item.short ?? item.label)[locale],
+      href: href(id, locale),
+      active: current?.route.id === id,
+    };
   });
 
   return (
@@ -57,25 +63,27 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     >
       <div className="mx-auto flex max-w-[84rem] items-center justify-between gap-6 px-5 sm:px-8">
         <Link href={href("home", locale)} className="flex flex-col leading-none">
-          <span className="font-display text-lg tracking-tight sm:text-xl">Dott. Roberto Dell&rsquo;Avanzato</span>
-          <span className="mt-1 text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft">
+          <span className="whitespace-nowrap font-display text-lg tracking-tight sm:text-xl">Dott. Roberto Dell&rsquo;Avanzato</span>
+          <span className="mt-1 hidden whitespace-nowrap text-[0.62rem] uppercase tracking-[0.22em] text-ink-soft sm:block">
             {locale === "it" ? "Medicina e chirurgia estetica" : "Aesthetic medicine and surgery"}
           </span>
         </Link>
 
         <nav aria-label={ui.menu[locale]} className="hidden items-center gap-6 xl:flex">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={item.active ? "page" : undefined}
-              className={`text-[0.82rem] uppercase tracking-[0.12em] transition-colors hover:text-clinic ${
-                item.active ? "text-clinic" : "text-ink-soft"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {items
+            .filter((item) => item.primary)
+            .map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={item.active ? "page" : undefined}
+                className={`whitespace-nowrap text-[0.78rem] uppercase tracking-[0.1em] transition-colors hover:text-clinic ${
+                  item.active ? "text-clinic" : "text-ink-soft"
+                }`}
+              >
+                {item.short}
+              </Link>
+            ))}
         </nav>
 
         <div className="flex items-center gap-3">

@@ -11,7 +11,7 @@
   --color-ink-soft: #43526a;
   --color-clinic: #1a5f92;
   --color-clinic-deep: #12405f;
-  --color-gold: #a07d12;
+  --color-gold: #7d600d;
   --color-gold-bright: #c9a227;
   --color-line: #dcd9d1;
 
@@ -160,8 +160,8 @@ html[data-js="on"] .reveal[data-visible="true"] {
   opacity: 1;
   transform: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  .reveal {
+@media (prefers-reduced-motion: reduce), print {
+  html[data-js="on"] .reveal {
     opacity: 1;
     transform: none;
   }
