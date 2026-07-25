@@ -60,6 +60,30 @@ Scala fluida `--step--1 → --step-4`. Due tarature specifiche del settore:
 - **interlinea 1.7** invece di 1.5-1.6
 - **`--muted #4B4437`**, cioè 8.70:1 sul fondo, non il grigio da 4.5:1 di minima
 
+## 3b. Mobile first
+
+La base del CSS, quella senza media query, **è il telefono**. Ogni `@media` è un
+`min-width` che aggiunge, mai un `max-width` che ripara. Le eccezioni sono due e
+dichiarate: la barra d'azione fissa e il suo spazio in fondo alla pagina.
+
+Le regole che qui cambiano davvero il risultato:
+
+- **Nessuna griglia a colonne fisse sotto i 48rem.** Una `grid-template-columns: 3rem 1fr`
+  con tre figli manda il terzo nella colonna da 3rem: il testo va a capo una parola per
+  riga. È esattamente il difetto che si è presentato nella lista trattamenti. Sul telefono
+  il numero è un'etichetta sopra il titolo, non una colonna.
+- **Spaziature grandi fluide** (`--sp-5/6/7` in `clamp`) e ancorate al valore mobile: 104px
+  fra due sezioni su desktop sono respiro, su un telefono sono uno scroll a vuoto.
+- **Una sola CTA primaria visibile per schermata.** La barra d'azione fissa entra solo
+  quando il bottone dell'hero è uscito dal campo. Due bottoni primari identici sulla stessa
+  schermata sono una gerarchia rotta, non una comodità.
+- **`scroll-margin-top` su ogni sezione con id**, altrimenti l'header fisso mangia il
+  titolo a ogni link di ancora.
+- **`background-attachment: fixed` solo da 48rem in su**: su iOS costringe a ridipingere il
+  viewport a ogni frame di scroll.
+- **Dati affiancati, non impilati**: i quattro numeri sotto l'hero stanno in due colonne.
+  Quattro righe in verticale sono quattro schermate per dire una cosa sola.
+
 ## 4. Ritmo spaziale
 
 Scala non monotona (`0.5 · 0.875 · 1.5 · 2.5 · 4 · 6.5 · 10 rem`). I salti ineguali evitano

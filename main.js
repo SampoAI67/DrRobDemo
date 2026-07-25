@@ -47,7 +47,21 @@
     }
   }
 
-  /* 3. Anno --------------------------------------------------------------- */
+  /* 3. Barra d'azione mobile ---------------------------------------------
+     Compare solo quando la CTA dell'hero e' uscita dal campo: due bottoni
+     primari identici sulla stessa schermata sono una gerarchia rotta. */
+  var bar = document.querySelector('.mobile-bar');
+  var heroCta = document.querySelector('.hero__actions');
+
+  if (bar && heroCta && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle('is-up', !entries[0].isIntersecting);
+    }, { threshold: 0 }).observe(heroCta);
+  } else if (bar) {
+    bar.classList.add('is-up');
+  }
+
+  /* 4. Anno --------------------------------------------------------------- */
   var year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 })();

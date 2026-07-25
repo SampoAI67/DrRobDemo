@@ -49,14 +49,16 @@
   --step-3:  clamp(2.20rem, 1.60rem + 2.90vw, 4.25rem);
   --step-4:  clamp(3.00rem, 1.40rem + 7.20vw, 8.50rem);
 
-  /* Ritmo spaziale (scala non monotona — evita monotonous-spacing) */
+  /* Ritmo spaziale: scala non monotona (evita monotonous-spacing).
+     I tre passi grandi sono fluidi e partono dal valore MOBILE: su un telefono
+     104px di aria fra due sezioni sono uno scroll a vuoto, su desktop servono. */
   --sp-1: 0.5rem;
   --sp-2: 0.875rem;
-  --sp-3: 1.5rem;
-  --sp-4: 2.5rem;
-  --sp-5: 4rem;
-  --sp-6: 6.5rem;
-  --sp-7: 10rem;
+  --sp-3: 1.25rem;
+  --sp-4: 2rem;
+  --sp-5: clamp(2.5rem, 1.9rem + 3vw, 4rem);
+  --sp-6: clamp(3.5rem, 2.2rem + 6.5vw, 6.5rem);
+  --sp-7: clamp(5rem, 2.6rem + 12vw, 10rem);
 
   --measure: 62ch;
   --gutter: clamp(1.25rem, 4vw, 4.5rem);
@@ -110,8 +112,11 @@ body {
   background-image:
     radial-gradient(120% 70% at 78% -10%, var(--brass-soft), transparent 60%),
     repeating-linear-gradient(0deg, transparent 0 3px, rgba(22, 19, 15, 0.012) 3px 4px);
-  background-attachment: fixed;
+  /* `fixed` fa ridipingere l'intero viewport a ogni frame di scroll su iOS:
+     si attiva solo da tablet in su, dove il costo non si vede. */
+  background-attachment: scroll;
 }
+@media (min-width: 48rem) { body { background-attachment: fixed; } }
 @media (prefers-color-scheme: dark) {
   body {
     background-image:
@@ -192,6 +197,11 @@ a { color: inherit; }
 .prose { max-width: var(--measure); color: var(--muted); }
 .prose + .prose { margin-top: var(--sp-3); }
 
+/* L'header è fisso: senza questo, un link di ancora deposita il titolo
+   della sezione sotto la barra. */
+:target, section[id], main > section[id] { scroll-margin-top: calc(58px + var(--sp-2)); }
+@media (min-width: 48rem) { section[id] { scroll-margin-top: calc(72px + var(--sp-3)); } }
+
 .section { padding-block: var(--sp-6); }
 .section--tight { padding-block: var(--sp-5); }
 
@@ -268,8 +278,9 @@ a { color: inherit; }
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-3);
-  min-height: 72px;
+  min-height: 58px;   /* mobile: la barra fissa non deve mangiare la pagina */
 }
+@media (min-width: 48rem) { .site-header__inner { min-height: 72px; } }
 .wordmark {
   font-family: var(--font-display);
   font-size: var(--step-1);
@@ -334,7 +345,10 @@ a { color: inherit; }
   font-size: var(--step-4);
   margin-block: 0 var(--sp-3);
 }
-.hero__name .surname { display: block; font-style: italic; margin-left: clamp(0, 4vw, 3.5rem); }
+/* Il rientro del cognome è un gesto da pagina larga: su telefono ruba
+   larghezza a una riga che è già al limite. */
+.hero__name .surname { display: block; font-style: italic; }
+@media (min-width: 48rem) { .hero__name .surname { margin-left: clamp(0rem, 4vw, 3.5rem); } }
 .hero__claim {
   font-family: var(--font-display);
   font-size: var(--step-2);
@@ -346,17 +360,24 @@ a { color: inherit; }
   color: var(--on-surface);
 }
 .hero__claim b { font-weight: 600; font-style: italic; }
+/* Mobile: due bottoni a larghezza piena, incolonnati. Affiancati e di
+   larghezza diversa sembrano due scarti, non una gerarchia. */
 .hero__actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: var(--sp-2);
   margin-top: var(--sp-4);
 }
+.hero__actions .btn { justify-content: space-between; }
+@media (min-width: 30rem) {
+  .hero__actions { display: flex; flex-wrap: wrap; }
+  .hero__actions .btn { justify-content: flex-start; }
+}
 
-/* Ritratto */
+/* Ritratto: su telefono un 4:5 è quasi mezzo schermo di segnaposto prima
+   che si arrivi ai dati, quindi si accorcia. */
 .portrait {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   background: var(--surface);
   border: 1px solid var(--hairline);
   overflow: hidden;
@@ -381,17 +402,25 @@ a { color: inherit; }
   letter-spacing: 0.04em;
 }
 .portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
+@media (min-width: 62rem) { .portrait { aspect-ratio: 4 / 5; } }
 
 /* Barra dati sotto l'hero */
+/* Mobile: due colonne. Quattro dati impilati in verticale sono quattro
+   schermate di scroll per dire una cosa sola. */
 .facts {
   margin-top: var(--sp-5);
   border-top: 1px solid var(--hairline);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-3);
 }
 .facts__item {
   padding: var(--sp-3) 0;
   border-bottom: 1px solid var(--hairline);
+}
+.facts__item:nth-last-child(-n+2) { border-bottom: 0; }
+@media (min-width: 48rem) {
+  .facts { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 0; }
 }
 @media (min-width: 48rem) {
   .facts__item { padding: var(--sp-3) var(--sp-3) var(--sp-3) 0; border-bottom: 0; }
@@ -438,27 +467,25 @@ a { color: inherit; }
 
 /* --- 8. Trattamenti — archetipo: services-editorial-list ---------------- */
 .tlist { border-top: 1px solid var(--hairline); }
+
+/* MOBILE (base): una sola colonna. Il numero è un'etichetta sopra il nome,
+   non una colonna: se restasse una colonna da 3rem, il corpo del testo
+   finirebbe dentro quei 3rem e andrebbe a capo una parola per riga. */
 .trow {
   display: grid;
-  grid-template-columns: 3rem minmax(0, 1fr);
-  gap: var(--sp-2) var(--sp-3);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-1);
   padding-block: var(--sp-4);
   border-bottom: 1px solid var(--hairline);
   transition: background-color var(--dur) var(--ease);
 }
-@media (min-width: 62rem) {
-  .trow {
-    grid-template-columns: 4.5rem minmax(0, 0.9fr) minmax(0, 1.1fr);
-    align-items: start;
-  }
-}
-.trow:hover { background: color-mix(in srgb, var(--brass) 6%, transparent); }
 .trow__n {
-  font-family: var(--font-display);
-  font-size: var(--step-2);
+  font-family: var(--font-text);
+  font-size: var(--step--1);
+  letter-spacing: 0.18em;
   line-height: 1;
-  color: var(--brass);
-  font-weight: 300;
+  color: var(--brass-text);
+  font-weight: 600;
 }
 .trow__name {
   font-family: var(--font-display);
@@ -466,6 +493,33 @@ a { color: inherit; }
   line-height: 1.1;
   font-weight: 400;
 }
+.trow__body { margin-top: var(--sp-1); }
+
+/* DA TABLET: torna la riga editoriale, numero in colonna e in Cormorant. */
+@media (min-width: 48rem) {
+  .trow {
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: var(--sp-2) var(--sp-3);
+    align-items: start;
+  }
+  .trow__body { grid-column: 2; margin-top: 0; }
+  .trow__n {
+    grid-row: span 2;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    letter-spacing: normal;
+    color: var(--brass);
+    font-weight: 300;
+  }
+}
+@media (min-width: 62rem) {
+  .trow {
+    grid-template-columns: 4.5rem minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .trow__n { grid-row: auto; }
+  .trow__body { grid-column: 3; }
+}
+.trow:hover { background: color-mix(in srgb, var(--brass) 6%, transparent); }
 .trow__name sup { font-family: var(--font-text); font-size: 0.42em; vertical-align: super; letter-spacing: 0.04em; }
 .trow__body { color: var(--muted); max-width: 52ch; }
 .trow__tags {
@@ -625,17 +679,24 @@ a { color: inherit; }
 .sede__role { font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass-text); display: block; margin-bottom: 0.35rem; }
 
 /* --- 11. Timeline ------------------------------------------------------- */
-.tl { border-left: 1px solid var(--hairline); padding-left: var(--sp-4); display: grid; gap: var(--sp-4); }
+.tl {
+  border-left: 1px solid var(--hairline);
+  padding-left: var(--sp-3);
+  display: grid;
+  gap: var(--sp-4);
+}
+@media (min-width: 48rem) { .tl { padding-left: var(--sp-4); } }
 .tl__item { position: relative; }
 .tl__item::before {
   content: "";
   position: absolute;
-  left: calc(var(--sp-4) * -1 - 1px);
+  left: calc(var(--sp-3) * -1 - 1px);
   top: 0.7em;
   width: 9px; height: 9px;
   transform: translateX(-4px) rotate(45deg);
   background: var(--brass);
 }
+@media (min-width: 48rem) { .tl__item::before { left: calc(var(--sp-4) * -1 - 1px); } }
 .tl__y { font-family: var(--font-display); font-size: var(--step-1); color: var(--brass-text); line-height: 1; }
 .tl__b { color: var(--muted); margin-top: 0.35rem; max-width: 54ch; }
 
@@ -671,6 +732,21 @@ a { color: inherit; }
 }
 .mobile-bar .btn { width: 100%; justify-content: center; }
 @media (min-width: 62rem) { .mobile-bar { display: none; } }
+
+/* Una sola CTA primaria per schermata (PLAYBOOK §4c): finché il bottone
+   dell'hero è visibile, la barra resta fuori campo. Il JS le mette .is-up
+   quando la CTA dell'hero è uscita. Senza JS la barra è sempre visibile,
+   che è il comportamento sicuro. */
+.js .mobile-bar {
+  transform: translateY(120%);
+  transition: transform var(--dur) var(--ease);
+  will-change: transform;
+}
+.js .mobile-bar.is-up { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .mobile-bar { transition: none; }
+}
+/* Spazio in fondo perché la barra non copra le righe legali del footer. */
 @media (max-width: 61.99rem) { body { padding-bottom: 5.5rem; } }
 
 /* --- 13. Footer — archetipo: footer-editorial-oversized ---------------- */
