@@ -1,0 +1,288 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Token
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-ground: #f2f1ec; /* fondo bone, leggermente freddo */
+  --color-ink: #0a0a0a; /* testo                             19.0:1 su ground */
+  --color-ink-soft: #4a4a4a; /* testo secondario               7.8:1 su ground */
+  --color-accent: #00747f; /* teal — SOLO su fondo chiaro      4.9:1 su ground */
+  --color-accent-bright: #00b0c8; /* ciano logo — SOLO su fondo scuro 6.7:1 su dark */
+  --color-line: #e0dcd5; /* filetti su chiaro */
+  --color-dark: #111111; /* fondo scuro */
+  --color-line-dark: #2f2f2f; /* filetti su scuro */
+  --color-invert: #f2f1ec; /* testo su scuro                  17.6:1 su dark */
+  --color-invert-soft: #a6a6a6; /* testo secondario su scuro     7.8:1 su dark */
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Su fondo scuro il focus ring deve virare sul ciano del logo, che lì passa AA. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-accent-bright);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Scala tipografica — nessun valore supera 36,8px (2.3rem).
+ * Unica eccezione: .u-wordmark, che è un logotipo, non testo corrente.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .u-label {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 118;
+    font-weight: 500;
+    font-size: 0.8rem; /* 12,8 px */
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .u-meta {
+    font-size: 0.8rem; /* 12,8 px — blocchi densi della S7 */
+    line-height: 1.6;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * S6 — accordion del metodo
+   * ------------------------------------------------------------------ */
+  .method-title {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 112;
+    font-weight: 500;
+    font-size: 0.9rem; /* 14,4 px da inattiva */
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-invert-soft);
+    transition:
+      font-size 420ms ease-out,
+      color 420ms ease-out,
+      letter-spacing 420ms ease-out;
+  }
+
+  [data-open="true"] .method-title {
+    font-size: clamp(1.5rem, 1.05rem + 1.6vw, 2.3rem); /* fino a 36,8 px */
+    letter-spacing: -0.01em;
+    color: var(--color-invert);
+  }
+
+  .method-panel {
+    display: none;
+  }
+
+  [data-open="true"] > .method-panel {
+    display: block;
+  }
+
+  .u-body {
+    font-size: 0.9rem; /* 14,4 px */
+    line-height: 1.7;
+  }
+
+  .u-statement {
+    font-size: 1.2rem; /* 19,2 px */
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  .u-lead {
+    font-size: clamp(1.2rem, 0.95rem + 0.8vw, 1.5rem); /* 19,2 → 24 px */
+    line-height: 1.45;
+    font-weight: 300;
+    letter-spacing: -0.005em;
+  }
+
+  .u-title {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 108;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 1.05rem + 1.6vw, 2.3rem); /* 24 → 36,8 px */
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+  }
+
+  .u-wordmark {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 125;
+    font-weight: 500;
+    /* Il minimo è tarato per non sfondare i 390px di larghezza con "DELL'AVANZATO". */
+    font-size: clamp(1.85rem, 0.4rem + 6.4vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Struttura
+   * ------------------------------------------------------------------ */
+  .section {
+    padding-block: clamp(4.5rem, 9vw, 9rem);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /*
+   * Allinea il bordo sinistro a `.wrap` lasciando che il contenuto esca a destra
+   * dallo schermo. Il calcolo è su `100%` e non su `100vw` per non contare la
+   * scrollbar e generare overflow orizzontale.
+   */
+  .wrap-left {
+    width: 100%;
+    padding-inline-start: max(
+      var(--gutter),
+      calc((100% - 90rem) / 2 + var(--gutter))
+    );
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Link e bottoni
+   * ------------------------------------------------------------------ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3rem; /* 48px — sopra i 44 di touch target */
+    padding-inline: 1.75rem;
+    border: 1px solid currentColor;
+    transition:
+      background-color 220ms ease-out,
+      color 220ms ease-out;
+  }
+
+  .btn-solid {
+    background-color: var(--color-ink);
+    color: var(--color-ground);
+    border-color: var(--color-ink);
+  }
+
+  .btn-solid:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .btn-outline-invert {
+    color: var(--color-invert);
+    border-color: var(--color-invert);
+  }
+
+  .btn-outline-invert:hover {
+    background-color: var(--color-invert);
+    color: var(--color-ink);
+  }
+
+  /* Link testuale con filetto che si estende all'hover. */
+  .link-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem; /* 44px */
+    color: var(--color-accent);
+  }
+
+  .link-rule .rule {
+    display: block;
+    width: 1.75rem;
+    height: 1px;
+    background-color: currentColor;
+    transition: width 260ms ease-out;
+  }
+
+  .link-rule:hover .rule {
+    width: 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Gutter orizzontale condiviso
+ * ------------------------------------------------------------------ */
+:root {
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+/* ------------------------------------------------------------------ *
+ * Grana: dà materia allo scrim dell'hero. Puramente decorativa.
+ * ------------------------------------------------------------------ */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ * Lenis
+ * ------------------------------------------------------------------ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Movimento ridotto
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
