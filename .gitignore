@@ -1,0 +1,9 @@
+# Gabriel — workspace progetto
+node_modules/
+.next/
+out/
+.env
+.env.local
+*.log
+.DS_Store
+.gabriel/
