@@ -12,6 +12,7 @@ import type { Localized } from "@/lib/i18n";
 export type Concern = {
   n: string;
   label: Localized<string>;
+  /** Nome canonico, senza percorso: lo risolve lib/media.ts. */
   image: string;
   alt: Localized<string>;
   /** Scheda di destinazione, riferita a TREATMENTS. */
@@ -22,7 +23,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "01",
     label: { it: "Rilassamento cutaneo", en: "Skin laxity" },
-    image: "/media/sq-ultherapy.webp",
+    image: "sq-ultherapy",
     alt: {
       it: "Trattamento con manipolo a ultrasuoni sul volto",
       en: "Ultrasound handpiece treatment on the face",
@@ -32,7 +33,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "02",
     label: { it: "Adiposità localizzate", en: "Localised fat deposits" },
-    image: "/media/sq-liposcultura.webp",
+    image: "sq-liposcultura",
     alt: {
       it: "Intervento di liposcultura laser assistita",
       en: "Laser-assisted liposculpture procedure",
@@ -42,7 +43,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "03",
     label: { it: "Rughe", en: "Wrinkles" },
-    image: "/media/sq-botulino.webp",
+    image: "sq-botulino",
     alt: {
       it: "Preparazione di un trattamento per le rughe d’espressione",
       en: "Preparation of a treatment for expression lines",
@@ -52,7 +53,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "04",
     label: { it: "Volumi e labbra", en: "Volume and lips" },
-    image: "/media/sq-filler.webp",
+    image: "sq-filler",
     alt: {
       it: "Siringa preriempita per il trattamento dei volumi",
       en: "Pre-filled syringe for volume treatment",
@@ -62,7 +63,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "05",
     label: { it: "Cellulite", en: "Cellulite" },
-    image: "/media/sq-cellfina.webp",
+    image: "sq-cellfina",
     alt: {
       it: "Trattamento degli inestetismi della cellulite",
       en: "Treatment for the appearance of cellulite",
@@ -72,14 +73,14 @@ export const CONCERNS: Concern[] = [
   {
     n: "06",
     label: { it: "Palpebre e sguardo", en: "Eyelids and gaze" },
-    image: "/media/sq-blefaroplastica.webp",
+    image: "sq-blefaroplastica",
     alt: { it: "Regione perioculare", en: "Periocular region" },
     treatmentSlug: "blefaroplastica-laser",
   },
   {
     n: "07",
     label: { it: "Profilo del viso", en: "Facial profile" },
-    image: "/media/sq-rinosettoplastica.webp",
+    image: "sq-rinosettoplastica",
     alt: {
       it: "Profilo del viso, area della rinosettoplastica",
       en: "Facial profile, the area treated by septorhinoplasty",
@@ -89,7 +90,7 @@ export const CONCERNS: Concern[] = [
   {
     n: "08",
     label: { it: "Ginocchia e corpo", en: "Knees and body" },
-    image: "/media/sq-corpo.webp",
+    image: "sq-corpo",
     alt: {
       it: "Trattamento di rimodellamento del corpo",
       en: "Body reshaping treatment",

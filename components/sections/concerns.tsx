@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { CONCERNS } from "@/content/concerns";
+import { media } from "@/lib/media";
 import { concerns as copy } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -38,7 +39,7 @@ export function Concerns({ locale }: { locale: Locale }) {
               {CONCERNS.map((c, i) => (
                 <Image
                   key={c.n}
-                  src={c.image}
+                  src={media(c.image)}
                   alt={i === active ? c.alt[locale] : ""}
                   aria-hidden={i === active ? undefined : true}
                   fill

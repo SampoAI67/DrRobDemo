@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { METHOD } from "@/content/method";
+import { media } from "@/lib/media";
 import { method as copy } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 
@@ -32,7 +33,7 @@ export function Method({ locale }: { locale: Locale }) {
       {METHOD.map((step, i) => (
         <Image
           key={step.n}
-          src={step.image}
+          src={media(step.image)}
           alt=""
           fill
           sizes="100vw"

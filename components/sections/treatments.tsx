@@ -6,7 +6,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperInstance } from "swiper";
 import { Reveal } from "@/components/reveal";
-import { TREATMENTS } from "@/content/treatments";
+import { HOME_TREATMENTS } from "@/content/treatments";
+import { media } from "@/lib/media";
 import { treatments as copy } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -62,9 +63,9 @@ export function Treatments({ locale }: { locale: Locale }) {
           breakpoints={{ 768: { spaceBetween: 32 } }}
           onSwiper={onSwiper}
         >
-          {TREATMENTS.map((t) => (
+          {HOME_TREATMENTS.map((t) => (
             <SwiperSlide
-              key={t.slug}
+              key={t.slug.it}
               className="!w-[clamp(200px,58vw,320px)] shrink-0"
             >
               {/* Punta all'indice finché le schede dedicate non esistono: lo slug
@@ -72,7 +73,7 @@ export function Treatments({ locale }: { locale: Locale }) {
               <Link href={href("treatments", locale)} className="group block">
                 <div className="relative aspect-square overflow-hidden bg-line">
                   <Image
-                    src={t.image}
+                    src={media(t.image)}
                     alt={t.alt[locale]}
                     fill
                     sizes="(min-width: 768px) 320px, 58vw"

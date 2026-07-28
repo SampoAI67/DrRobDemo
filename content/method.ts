@@ -22,7 +22,7 @@ export const METHOD: MethodStep[] = [
       it: "Oltre 25 anni. Specialista in Chirurgia, Master Universitario in Chirurgia Estetica (San Marino), Diploma Universitario in Chirurgia Mini-Invasiva (Francia).",
       en: "Over 25 years. Specialist in Surgery, University Master in Aesthetic Surgery (San Marino), University Diploma in Minimally Invasive Surgery (France).",
     },
-    image: "/media/method-01-esperienza.webp",
+    image: "method-01-esperienza",
     alt: {
       it: "Ritratto del dott. Roberto Dell’Avanzato",
       en: "Portrait of Dr Roberto Dell’Avanzato",
@@ -35,7 +35,7 @@ export const METHOD: MethodStep[] = [
       it: "Tra i primi in Italia nel 2002 sulla liposuzione laser assistita. Endolift® dal 2005.",
       en: "Among the first in Italy, in 2002, to perform laser-assisted liposuction. Endolift® since 2005.",
     },
-    image: "/media/method-02-tecnologia.webp",
+    image: "method-02-tecnologia",
     alt: {
       it: "Il dott. Dell’Avanzato accanto a un dispositivo laser",
       en: "Dr Dell’Avanzato beside a laser device",
@@ -48,7 +48,7 @@ export const METHOD: MethodStep[] = [
       it: "Docente a contratto di Laser e Micro-Liposcultura Laser, Università di San Marino e La Sapienza di Roma.",
       en: "Adjunct lecturer in Lasers and Laser Micro-Liposculpture, University of San Marino and La Sapienza University of Rome.",
     },
-    image: "/media/method-03-insegnamento.webp",
+    image: "method-03-insegnamento",
     alt: {
       it: "Il dott. Dell’Avanzato nel suo studio",
       en: "Dr Dell’Avanzato at his practice",
@@ -61,7 +61,7 @@ export const METHOD: MethodStep[] = [
       it: "Anamnesi, piano su misura, trattamento mini-invasivo o non invasivo, follow-up.",
       en: "History taking, a tailored plan, minimally invasive or non-invasive treatment, follow-up.",
     },
-    image: "/media/method-04-percorso.webp",
+    image: "method-04-percorso",
     alt: {
       it: "Il dott. Dell’Avanzato durante una visita",
       en: "Dr Dell’Avanzato during a consultation",

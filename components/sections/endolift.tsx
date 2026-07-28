@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Reveal } from "@/components/reveal";
+import { media } from "@/lib/media";
 import { endolift as copy, endoliftClusterAlt } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -13,7 +14,7 @@ import { href } from "@/lib/routes";
 /** Le tre immagini restano fra 130 e 170px: a quella scala le sorgenti reggono. */
 const CLUSTER = [
   {
-    src: "/media/cluster-1.webp",
+    src: "cluster-1",
     width: 400,
     height: 300,
     /** posizione sul contenitore, desktop */
@@ -21,14 +22,14 @@ const CLUSTER = [
     amplitude: 32,
   },
   {
-    src: "/media/cluster-2.webp",
+    src: "cluster-2",
     width: 300,
     height: 400,
     position: "right-[3%] top-[24%] w-[8.75rem]",
     amplitude: 24,
   },
   {
-    src: "/media/cluster-3.webp",
+    src: "cluster-3",
     width: 300,
     height: 400,
     position: "bottom-[6%] left-[11%] w-[9.5rem]",
@@ -124,7 +125,7 @@ export function Endolift({ locale }: { locale: Locale }) {
               aria-hidden="true"
             >
               <Image
-                src={item.src}
+                src={media(item.src)}
                 alt=""
                 width={item.width}
                 height={item.height}
@@ -160,7 +161,7 @@ export function Endolift({ locale }: { locale: Locale }) {
           {CLUSTER.map((item, i) => (
             <li key={item.src} className="w-[7.5rem]">
               <Image
-                src={item.src}
+                src={media(item.src)}
                 alt={endoliftClusterAlt[i][locale]}
                 width={item.width}
                 height={item.height}
