@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { HTML_LANG, type Locale } from "@/lib/i18n";
-import { alternates, href, type RouteKey } from "@/lib/routes";
+import {
+  alternates,
+  href,
+  slugFor,
+  type RouteKey,
+  type SlugArg,
+} from "@/lib/routes";
 import { meta } from "@/content/site";
 
 /**
@@ -16,6 +22,9 @@ export const SITE_URL =
  *
  * Il canonical e gli alternates si costruiscono dalla stessa mappa rotte usata da
  * nav e switch di lingua: se uno slug cambia, cambiano insieme e non si separano.
+ *
+ * Per le schede trattamento `slug` è un `Localized<string>`: il canonical prende
+ * quello della lingua corrente, gli alternates ciascuno il proprio.
  */
 export function buildMetadata({
   locale,
@@ -26,7 +35,7 @@ export function buildMetadata({
 }: {
   locale: Locale;
   routeKey: RouteKey;
-  slug?: string;
+  slug?: SlugArg;
   title?: string;
   description?: string;
 }): Metadata {
@@ -37,7 +46,7 @@ export function buildMetadata({
     // Il sito resta fuori dagli indici finché non si va live.
     robots: { index: false, follow: false },
     alternates: {
-      canonical: href(routeKey, locale, slug),
+      canonical: href(routeKey, locale, slugFor(slug, locale)),
       languages: alternates(routeKey, slug),
     },
     openGraph: {

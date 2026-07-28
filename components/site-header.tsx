@@ -1,13 +1,24 @@
 import Link from "next/link";
 import { LOCALE_LABEL, otherLocale, type Locale } from "@/lib/i18n";
-import { href, NAV_KEYS, type RouteKey } from "@/lib/routes";
+import {
+  href,
+  NAV_KEYS,
+  slugFor,
+  type RouteKey,
+  type SlugArg,
+} from "@/lib/routes";
 import { navLabel, ui } from "@/content/site";
 
 type Props = {
   locale: Locale;
   /** Rotta corrente: serve allo switch di lingua per restare sulla stessa pagina. */
   routeKey: RouteKey;
-  slug?: string;
+  /**
+   * Slug della pagina corrente. Per le schede trattamento va passato il
+   * `Localized<string>` intero, non lo slug di questa lingua: lo switch deve
+   * costruire il percorso nell'altra, dove lo slug è diverso.
+   */
+  slug?: SlugArg;
   /**
    * `over` — trasparente sopra l'immagine dell'hero, testo chiaro.
    * `solid` — su fondo bone nelle pagine interne, testo scuro.
@@ -60,7 +71,7 @@ export function SiteHeader({ locale, routeKey, slug, variant = "solid" }: Props)
           ))}
           <li>
             <Link
-              href={href(routeKey, other, slug)}
+              href={href(routeKey, other, slugFor(slug, other))}
               hrefLang={other}
               aria-label={ui.switchLanguageAria[locale]}
               className={`${link} ${over ? "text-invert-soft" : "text-ink-soft"}`}

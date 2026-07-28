@@ -19,7 +19,7 @@ export function PageStub({
   routeKey,
 }: {
   locale: Locale;
-  routeKey: Extract<RouteKey, "treatments" | "biography" | "contact">;
+  routeKey: Extract<RouteKey, "biography" | "contact">;
 }) {
   const stub = stubs[routeKey];
 

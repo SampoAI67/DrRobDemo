@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { CONCERNS } from "@/content/concerns";
+import { bySlug } from "@/content/treatments";
 import { media } from "@/lib/media";
 import { concerns as copy } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
@@ -53,10 +54,19 @@ export function Concerns({ locale }: { locale: Locale }) {
           </div>
 
           <ul className="col-span-12 md:col-span-6 md:col-start-7">
-            {CONCERNS.map((c, i) => (
+            {CONCERNS.map((c, i) => {
+              // `treatmentSlug` è quello italiano — bySlug accetta entrambi — e da
+              // lì si prende lo slug della lingua corrente.
+              const target = bySlug(c.treatmentSlug);
+
+              return (
               <li key={c.n} className="border-t border-line last:border-b">
                 <Link
-                  href={href("treatments", locale)}
+                  href={
+                    target
+                      ? href("treatment", locale, target.slug[locale])
+                      : href("treatments", locale)
+                  }
                   onPointerEnter={() => setActive(i)}
                   onFocus={() => setActive(i)}
                   className="group flex min-h-14 items-baseline gap-6 py-4"
@@ -77,7 +87,8 @@ export function Concerns({ locale }: { locale: Locale }) {
                   </span>
                 </Link>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </div>
       </Reveal>

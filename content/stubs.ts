@@ -12,13 +12,6 @@ import { studio } from "@/content/site";
 type Stub = { title: Localized<string>; intro: Localized<string> };
 
 export const stubs = {
-  treatments: {
-    title: { it: "Trattamenti", en: "Treatments" },
-    intro: {
-      it: "Pagina in preparazione. Ogni trattamento avrà una scheda informativa dedicata.",
-      en: "Page in preparation. Each treatment will have its own information page.",
-    },
-  },
   biography: {
     title: { it: "Biografia", en: "Biography" },
     intro: {

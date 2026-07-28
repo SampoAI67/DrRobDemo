@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { PageStub } from "@/components/page-stub";
+import { TreatmentsIndex } from "@/components/treatments-index";
+import { treatmentsIndex } from "@/content/treatment-pages";
+import { studio } from "@/content/site";
 import { buildMetadata } from "@/lib/metadata";
-import { stubs } from "@/content/stubs";
-import { meta } from "@/content/site";
 
 export const metadata: Metadata = buildMetadata({
   locale: "it",
   routeKey: "treatments",
-  title: `${stubs.treatments.title.it} — ${meta.title.it}`,
+  title: `${treatmentsIndex.title.it} — ${studio.name}`,
+  description: treatmentsIndex.lead.it,
 });
 
 export default function Page() {
-  return <PageStub locale="it" routeKey="treatments" />;
+  return <TreatmentsIndex locale="it" />;
 }

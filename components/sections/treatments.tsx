@@ -68,9 +68,10 @@ export function Treatments({ locale }: { locale: Locale }) {
               key={t.slug.it}
               className="!w-[clamp(200px,58vw,320px)] shrink-0"
             >
-              {/* Punta all'indice finché le schede dedicate non esistono: lo slug
-                  è già in `content/treatments.ts`, basterà passarlo a href(). */}
-              <Link href={href("treatments", locale)} className="group block">
+              <Link
+                href={href("treatment", locale, t.slug[locale])}
+                className="group block"
+              >
                 <div className="relative aspect-square overflow-hidden bg-line">
                   <Image
                     src={media(t.image)}

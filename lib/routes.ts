@@ -28,6 +28,24 @@ const SEGMENTS: Record<RouteKey, Localized<string>> = {
 };
 
 /**
+ * Slug di una scheda: uguale nelle due lingue (i marchi) oppure già tradotto.
+ *
+ * Le schede trattamento hanno slug localizzati — `filler` / `dermal-fillers` — e
+ * `alternates()` deve poterli distinguere, altrimenti l'hreflang inglese punterebbe
+ * a un percorso italiano che in inglese non esiste.
+ */
+export type SlugArg = string | Localized<string>;
+
+/** Lo slug nella lingua richiesta, o `undefined` se la rotta non ne ha. */
+export function slugFor(
+  slug: SlugArg | undefined,
+  locale: Locale,
+): string | undefined {
+  if (slug === undefined) return undefined;
+  return typeof slug === "string" ? slug : slug[locale];
+}
+
+/**
  * Percorso assoluto di una rotta.
  *
  * L'italiano sta alla radice, l'inglese sotto `/en`: `href("contact", "it")` dà
@@ -48,9 +66,9 @@ export const NAV_KEYS: RouteKey[] = ["treatments", "biography", "contact"];
  * Mappa per `alternates.languages`: dato un percorso in una lingua, i corrispondenti
  * nelle altre. Lo switch deve portare alla pagina equivalente, non alla home.
  */
-export function alternates(key: RouteKey, slug?: string): Record<string, string> {
+export function alternates(key: RouteKey, slug?: SlugArg): Record<string, string> {
   return {
-    "it-IT": href(key, "it", slug),
-    en: href(key, "en", slug),
+    "it-IT": href(key, "it", slugFor(slug, "it")),
+    en: href(key, "en", slugFor(slug, "en")),
   };
 }

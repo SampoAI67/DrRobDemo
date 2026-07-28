@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Reveal } from "@/components/reveal";
 import { media } from "@/lib/media";
+import { bySlug } from "@/content/treatments";
 import { endolift as copy, endoliftClusterAlt } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
@@ -50,6 +51,7 @@ const STRENGTH = 0.58;
 export function Endolift({ locale }: { locale: Locale }) {
   const stage = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLDivElement | null)[]>([]);
+  const endoliftSlug = bySlug("endolift")?.slug[locale];
 
   useGSAP(
     () => {
@@ -148,7 +150,16 @@ export function Endolift({ locale }: { locale: Locale }) {
               </p>
             </blockquote>
             <div className="mt-12 flex justify-center" data-reveal>
-              <Link href={href("treatments", locale)} className="link-rule u-label">
+              {/* Il link dice «la metodica Endolift®»: ora che la scheda esiste,
+                  porta lì e non più all'indice. */}
+              <Link
+                href={
+                  endoliftSlug
+                    ? href("treatment", locale, endoliftSlug)
+                    : href("treatments", locale)
+                }
+                className="link-rule u-label"
+              >
                 <span aria-hidden="true" className="rule" />
                 {copy.cta[locale]}
               </Link>
