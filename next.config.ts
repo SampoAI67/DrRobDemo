@@ -1,11 +1,13 @@
 import type { NextConfig } from "next";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (process.env.GITHUB_ACTIONS ? "/DrRobDemo" : "");
+
 const nextConfig: NextConfig = {
   output: "export",
+  basePath: basePath,
   images: {
     // Le immagini sono già ritagliate e dimensionate in public/media (vedi MANIFEST.md).
-    // Il loader custom mappa la larghezza richiesta sulla variante nativa più vicina:
-    // è l'unico modo di avere srcset reali con `output: "export"` senza upscalare nulla.
+    // Il loader custom mappa la larghezza richiesta sulla variante nativa più vicina.
     loader: "custom",
     loaderFile: "./lib/image-loader.ts",
     deviceSizes: [640, 828, 1080, 1280, 1500, 1920, 3200],
