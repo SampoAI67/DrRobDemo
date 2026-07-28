@@ -67,17 +67,33 @@ sullo sfondo.
   essere pubblicizzati al pubblico (D.Lgs. 219/2006). **Da far valutare al consulente
   del cliente**: o si sostituisce l'immagine, o si conferma che così com'è non è
   pubblicità di un medicinale. Non l'ho rimossa da sola perché toglierebbe una card
-- **Soggetti in parte scoperti:** `sq-rinosettoplastica`, `sq-mastoplastica`,
-  `sq-body-reshaping`, `sq-face-rebuilding`, `sq-buttock`. Sono le stesse immagini che
-  il cliente usa oggi, ma sul sito attuale stanno dentro pagine lunghe, mentre qui
-  finiscono in una griglia di card tutte uguali, dove si notano molto di più.
-  **Da rivedere con il cliente prima di pubblicare l'indice trattamenti**
-- **`sq-ladylift` è un'illustrazione medica 3D**, non una fotografia. In una griglia di
-  foto stona: o si accetta, o si chiede un'immagine fotografica
-- **Permalip non ha immagine.** Non esiste materiale: la scheda va progettata senza
-  apertura, oppure va chiesta una foto al cliente. Non sostituirla con la foto di un
-  altro trattamento
+- ⚠️ **Le immagini di stock sono modelli, non pazienti.** Sette schede
+  (`mastoplastica`, `body-reshaping`, `buttock`, `rinosettoplastica`, `ladylift`,
+  `permalip`, `face-rebuilding`) usano fotografie Pexels. **Non vanno mai presentate
+  come risultati ottenuti nello studio**, né accostate a diciture che lo lascino
+  intendere: sarebbe ingannevole, e su materiale sanitario è un problema serio.
+  L'elenco con autore e link è in [INVENTARIO.md](INVENTARIO.md)
 - **Il logo ha il fondo bianco cotto nel PNG**, niente canale alfa: su fondo bone si
   vedrebbe il riquadro. Per usarlo in pagina serve un SVG o un PNG con trasparenza
-- Tutte le immagini sono materiale del cliente: liberatorie dei soggetti ritratti da
-  verificare, non risultano da nessuna fonte pubblica
+- Le immagini del cliente: liberatorie dei soggetti ritratti da verificare, non
+  risultano da nessuna fonte pubblica
+
+## Perché sette immagini vengono dallo stock
+
+Le fotografie cliniche del cliente per mastoplastica, body reshaping, glutei e
+rinosettoplastica mostrano soggetti in parte scoperti. Sul suo sito attuale stanno
+dentro pagine lunghe, dove passano inosservate; nel nuovo indice trattamenti finiscono
+in una **griglia di card tutte uguali**, dove si notano molto di più e cambiano il
+registro della pagina. Ladylift era un'illustrazione 3D in mezzo a fotografie, e
+Permalip non aveva alcuna immagine.
+
+Le originali restano in `_src/orig/`: se il cliente le preferisce, si rimettono
+cambiando una riga in `tools/build-media.py`.
+
+**Dove il cliente resta protagonista:** hero, accordion del metodo, sezione Endolift e
+biografia usano le sue fotografie vere. È lì che l'autenticità conta, ed è un vantaggio
+che lo stock non può dare.
+
+Effetto collaterale utile: le sorgenti Pexels sono da **4000-4480 px**, contro i
+1000-1500 px del materiale del cliente. Per quelle sette schede il tetto di risoluzione
+non esiste più.
