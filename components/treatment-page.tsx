@@ -100,7 +100,10 @@ export function TreatmentPage({
           </Reveal>
 
           <Reveal className="wrap mt-14 md:mt-20">
-            <div className="grid grid-cols-12 gap-x-8 gap-y-12">
+            {/* gap-x ridotto sotto md: 11 spazi da 32 px fanno 352 px di vuoti, più
+                di quanto un viewport da 360 px lasci dentro il gutter. Sotto md le
+                colonne sono impilate a piena larghezza e il gap non si vede. */}
+            <div className="grid grid-cols-12 gap-x-4 gap-y-12 md:gap-x-8">
               {withheld ? null : (
                 <figure
                   className="col-span-12 max-w-[40rem] md:col-span-6"

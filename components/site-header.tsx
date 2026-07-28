@@ -45,11 +45,16 @@ export function SiteHeader({ locale, routeKey, slug, variant = "solid" }: Props)
     : "u-label flex min-h-11 items-center text-ink transition-colors hover:text-accent";
 
   return (
+    // `flex-wrap` non è cosmetico: sotto i 400 px wordmark e nav insieme superano la
+    // larghezza dello schermo. Sulla home il difetto era invisibile perché l'hero ha
+    // `overflow-hidden` e tagliava fuori le ultime due voci — «Contatti» e lo switch
+    // di lingua restavano irraggiungibili da telefono senza che nessuna misura di
+    // scrollWidth se ne accorgesse. Meglio una testata su due righe che due link persi.
     <header
       className={
         over
-          ? "wrap relative z-10 flex items-center justify-between gap-6 pt-6 md:pt-8"
-          : "wrap flex items-center justify-between gap-6 border-b border-line bg-ground py-5"
+          ? "wrap relative z-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-6 md:pt-8"
+          : "wrap flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line bg-ground py-5"
       }
     >
       {over ? (
@@ -61,7 +66,7 @@ export function SiteHeader({ locale, routeKey, slug, variant = "solid" }: Props)
       )}
 
       <nav aria-label={ui.mainNav[locale]}>
-        <ul className="flex items-center gap-5 md:gap-8">
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 md:gap-x-8">
           {NAV_KEYS.map((key) => (
             <li key={key} className={key === "biography" ? "hidden sm:block" : undefined}>
               <Link href={href(key, locale)} className={link}>

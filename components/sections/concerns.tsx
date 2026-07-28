@@ -32,7 +32,11 @@ export function Concerns({ locale }: { locale: Locale }) {
         </p>
 
         <div
-          className="mt-14 grid grid-cols-12 gap-x-8 gap-y-10 md:mt-20"
+          // Il gap orizzontale va ridotto sotto md: una griglia a 12 colonne con
+          // gap-x-8 ha 11 spazi da 32 px, cioè 352 px di soli vuoti, mentre a 360 px
+          // di viewport ne restano 320 dentro il gutter. Sotto md gli elementi sono
+          // comunque impilati a piena larghezza, quindi il gap lì non si vede.
+          className="mt-14 grid grid-cols-12 gap-x-4 gap-y-10 md:mt-20 md:gap-x-8"
           data-reveal
         >
           <div className="col-span-12 md:col-span-5">
