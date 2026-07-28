@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { PageStub } from "@/components/page-stub";
+import { BioPage } from "@/components/bio-page";
+import { bioContent } from "@/content/bio";
+import { studio } from "@/content/site";
 import { buildMetadata } from "@/lib/metadata";
-import { stubs } from "@/content/stubs";
-import { meta } from "@/content/site";
 
 export const metadata: Metadata = buildMetadata({
   locale: "it",
   routeKey: "biography",
-  title: `${stubs.biography.title.it} — ${meta.title.it}`,
+  title: `${bioContent.hero.title.it} — ${studio.name}`,
+  description: bioContent.hero.subtitle.it,
 });
 
 export default function Page() {
-  return <PageStub locale="it" routeKey="biography" />;
+  return <BioPage locale="it" />;
 }

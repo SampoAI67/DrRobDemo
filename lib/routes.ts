@@ -60,7 +60,7 @@ export function href(key: RouteKey, locale: Locale, slug?: string): string {
 }
 
 /** Voci della navigazione principale, nell'ordine in cui compaiono. */
-export const NAV_KEYS: RouteKey[] = ["treatments", "biography", "contact"];
+export const NAV_KEYS: RouteKey[] = ["treatments", "biography", "press", "contact"];
 
 /**
  * Mappa per `alternates.languages`: dato un percorso in una lingua, i corrispondenti

@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { PageStub } from "@/components/page-stub";
+import { ContactPage } from "@/components/contact-page";
+import { contactContent } from "@/content/contact";
+import { studio } from "@/content/site";
 import { buildMetadata } from "@/lib/metadata";
-import { stubs } from "@/content/stubs";
-import { meta } from "@/content/site";
 
 export const metadata: Metadata = buildMetadata({
   locale: "it",
   routeKey: "contact",
-  title: `${stubs.contact.title.it} — ${meta.title.it}`,
+  title: `${contactContent.hero.title.it} — ${studio.name}`,
+  description: contactContent.hero.subtitle.it,
 });
 
 export default function Page() {
-  return <PageStub locale="it" routeKey="contact" />;
+  return <ContactPage locale="it" />;
 }
