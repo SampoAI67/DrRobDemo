@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { hero } from "@/content/home";
 import { ui } from "@/content/site";
 import type { Locale } from "@/lib/i18n";
+import { mediaFile } from "@/lib/media";
 import { href } from "@/lib/routes";
 
 /**
@@ -16,17 +17,23 @@ import { href } from "@/lib/routes";
  * (public/media/MANIFEST.md), niente upscale.
  */
 export function Hero({ locale }: { locale: Locale }) {
+  const desktop1280 = mediaFile("hero-desktop", 1280);
+  const desktop1920 = mediaFile("hero-desktop", 1920);
+  const desktop3200 = mediaFile("hero-desktop", 3200);
+  const mobile828 = mediaFile("hero-mobile", 828);
+  const mobile1500 = mediaFile("hero-mobile", 1500);
+
   return (
     <section className="on-dark relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-dark">
       <picture>
         <source
           media="(min-width: 768px)"
-          srcSet="/media/hero-desktop-1280.webp 1280w, /media/hero-desktop-1920.webp 1920w, /media/hero-desktop-3200.webp 3200w"
+          srcSet={`${desktop1280} 1280w, ${desktop1920} 1920w, ${desktop3200} 3200w`}
           sizes="100vw"
         />
         <img
-          src="/media/hero-mobile-1500.webp"
-          srcSet="/media/hero-mobile-828.webp 828w, /media/hero-mobile-1500.webp 1500w"
+          src={mobile1500}
+          srcSet={`${mobile828} 828w, ${mobile1500} 1500w`}
           sizes="100vw"
           alt={hero.imageAlt[locale]}
           fetchPriority="high"
