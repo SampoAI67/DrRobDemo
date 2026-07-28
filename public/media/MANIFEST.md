@@ -1,13 +1,37 @@
-# Inventario immagini — homepage Dr. Dell'Avanzato
+# Immagini — le scelte e il perché
 
-Generato da `tools/build-media.py` a partire dagli originali della media library di
-`dellavanzatoroberto.it`. 38 file, **1,4 MB** in totale.
+L'elenco meccanico (nomi, larghezze, sorgenti) è in [INVENTARIO.md](INVENTARIO.md),
+rigenerato a ogni build. Qui c'è solo il ragionamento, che va letto prima di toccare
+le immagini.
+
+Generate da `tools/build-media.py` dagli originali della media library di
+`dellavanzatoroberto.it`: **49 immagini, 101 varianti, 2,7 MB**.
 
 **Nessuna immagine è stata ingrandita.** Lo script salta le varianti che richiederebbero
-un upscale invece di produrle sfocate.
+un upscale invece di produrle sfocate, e le dichiara nell'inventario.
+
+**La mappa delle varianti la genera lo script**, in `lib/image-variants.ts`. Prima era
+scritta a mano nel loader: bastava aggiungere un'immagine e scordare la mappa perché
+`next/image` ripiegasse in silenzio sulla src canonica, servendo l'originale a piena
+risoluzione. Ora non può andare fuori sincrono.
 
 Le sorgenti stanno in `_src/orig/` e sono escluse dal versionamento (`.gitignore`):
 sono materiale del cliente, non asset del progetto.
+
+## Formati
+
+| Prefisso | Rapporto | A cosa serve |
+|---|---|---|
+| `hero-desktop` / `hero-mobile` | 16:9 / 9:16 | apertura della home, due inquadrature diverse |
+| `sq-` | 1:1 | carosello home, indice trattamenti, selettore per zona |
+| `open-` | 3:2 | apertura delle schede trattamento |
+| `method-` | 2.35:1 | banda dell'accordion «Il metodo» |
+| `bio-` | 3:2 | pagina biografia |
+| `cluster-` | varie | immaginette fluttuanti della sezione Endolift |
+
+⚠️ **Le aperture `open-` si fermano a 960 px** (poche arrivano a 1200-1440). Vanno
+mostrate a **non più di ~640 px di larghezza**, o sfocano su schermi 2x. Non è un
+difetto della pipeline: è il tetto delle sorgenti del cliente.
 
 ---
 
@@ -30,50 +54,6 @@ sullo sfondo.
 - **Testo in basso a sinistra:** gli occhi della paziente stanno al ~45% dell'altezza,
   ben sopra un blocco di testo ancorato al fondo. Serve comunque lo scrim
 
-## S3 e S4 — card trattamenti e zone (1:1)
-
-| File | Sorgente | Max nativo |
-|---|---|---|
-| `sq-endolift-*` | `dr-dellavanzato-endolift2.jpg` | 640 |
-| `sq-ultherapy-*` | `LG1A6108.jpg` | 800 |
-| `sq-filler-*` | `filler.jpg` | 640 |
-| `sq-botulino-*` | `dr-dellavanzato-tossinabotulinica.jpg` | 640 |
-| `sq-profhilo-*` | `ProfhiloCampaign2.jpg` | **1080** |
-| `sq-liposcultura-*` | `LG1A5542-2.jpg` | 800 |
-| `sq-blefaroplastica-*` | `occhi.jpg` | 640 |
-| `sq-cellfina-*` | `LG1A6170.jpg` | 640 |
-| `sq-rinosettoplastica-*` | `dr-dellavanzato-rinosettoplastica2.jpg` | 640 |
-| `sq-corpo-*` | `dr-dellavanzato-liposcultura.jpg` | 640 |
-
-Ogni voce esiste in `-480` e nella larghezza massima nativa.
-
-⚠️ **Tetto reale: 640-800 px.** Le card della S3 si vedono a ~400 px: coperte a 1x,
-al limite a 2x. Le zone della S4 si vedono a ~640 px: coperte a 1x, **non** a 2x.
-È il limite delle sorgenti, non un difetto della pipeline.
-
-## S5 — cluster fluttuante
-
-| File | Sorgente |
-|---|---|
-| `cluster-1-400.webp` (400×300) | `dr-dellavanzato-endolift2.jpg` |
-| `cluster-2-300.webp` (300×400) | `innovatione.jpg` |
-| `cluster-3-300.webp` (300×400) | `LG1A5717.jpg` |
-
-Scartati i product shot su fondo bianco (`nanosoft`, `teos`): a 130-170 px su fondo bone
-il contorno netto li fa sembrare adesivi.
-
-## S6 — accordion metodo (2.35:1)
-
-| File | Voce | Sorgente |
-|---|---|---|
-| `method-01-esperienza-*` | ESPERIENZA CLINICA | `Roberto-dellAvanzato_1695.jpg` — ritratto su fondo grigio scuro, ideale per la sezione scura |
-| `method-02-tecnologia-*` | TECNOLOGIA | `innovatione.jpg` — al dispositivo |
-| `method-03-insegnamento-*` | INSEGNAMENTO | `LG1A5894-2-1.jpg` — in studio |
-| `method-04-percorso-*` | PERCORSO PERSONALIZZATO | `dr-dellavanzato-chi-sono2.jpg` |
-
-Banda 2.35:1 invece di 16:9: le sorgenti a 1500×630 non arrivano a 16:9 senza upscale,
-e una banda cinematografica sta meglio nel registro editoriale.
-
 ## Logo
 
 `logo-600.webp`, 600×156, da `dellavanzato-logo-rev06.png`. Accento `#00B0C8`.
@@ -87,7 +67,17 @@ e una banda cinematografica sta meglio nel registro editoriale.
   essere pubblicizzati al pubblico (D.Lgs. 219/2006). **Da far valutare al consulente
   del cliente**: o si sostituisce l'immagine, o si conferma che così com'è non è
   pubblicità di un medicinale. Non l'ho rimossa da sola perché toglierebbe una card
-- **`sq-rinosettoplastica`** e le immagini cliniche del corpo: soggetti in parte
-  scoperti. Coerenti col sito attuale, ma da confermare per il nuovo registro
+- **Soggetti in parte scoperti:** `sq-rinosettoplastica`, `sq-mastoplastica`,
+  `sq-body-reshaping`, `sq-face-rebuilding`, `sq-buttock`. Sono le stesse immagini che
+  il cliente usa oggi, ma sul sito attuale stanno dentro pagine lunghe, mentre qui
+  finiscono in una griglia di card tutte uguali, dove si notano molto di più.
+  **Da rivedere con il cliente prima di pubblicare l'indice trattamenti**
+- **`sq-ladylift` è un'illustrazione medica 3D**, non una fotografia. In una griglia di
+  foto stona: o si accetta, o si chiede un'immagine fotografica
+- **Permalip non ha immagine.** Non esiste materiale: la scheda va progettata senza
+  apertura, oppure va chiesta una foto al cliente. Non sostituirla con la foto di un
+  altro trattamento
+- **Il logo ha il fondo bianco cotto nel PNG**, niente canale alfa: su fondo bone si
+  vedrebbe il riquadro. Per usarlo in pagina serve un SVG o un PNG con trasparenza
 - Tutte le immagini sono materiale del cliente: liberatorie dei soggetti ritratti da
   verificare, non risultano da nessuna fonte pubblica
