@@ -78,6 +78,22 @@
     font-weight: 400;
   }
 
+  /* Simbolo ®, marcato da <RegMark>. Nel testo corrente va in apice piccolo. */
+  .reg {
+    font-size: 0.6em;
+  }
+
+  /* Dentro le etichette con tracking largo l'apice si stacca dalla parola: la
+     spaziatura si applica anche dopo l'ultima lettera, e resta un buco visibile.
+     Lì il glifo torna inline — è già disegnato in apice dal disegnatore del
+     carattere, non serve alzarlo. */
+  .u-label .reg,
+  .u-meta .reg,
+  .method-title .reg {
+    font-size: inherit;
+    vertical-align: baseline;
+  }
+
   /* ------------------------------------------------------------------ *
    * S6 — accordion del metodo
    * ------------------------------------------------------------------ */

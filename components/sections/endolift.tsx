@@ -6,12 +6,14 @@ import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Reveal } from "@/components/reveal";
+import { endolift as copy, endoliftClusterAlt } from "@/content/home";
+import type { Locale } from "@/lib/i18n";
+import { href } from "@/lib/routes";
 
 /** Le tre immagini restano fra 130 e 170px: a quella scala le sorgenti reggono. */
 const CLUSTER = [
   {
     src: "/media/cluster-1.webp",
-    alt: "Fibra laser impiegata nella metodica Endolift®",
     width: 400,
     height: 300,
     /** posizione sul contenitore, desktop */
@@ -20,7 +22,6 @@ const CLUSTER = [
   },
   {
     src: "/media/cluster-2.webp",
-    alt: "Dispositivo laser in studio",
     width: 300,
     height: 400,
     position: "right-[3%] top-[24%] w-[8.75rem]",
@@ -28,7 +29,6 @@ const CLUSTER = [
   },
   {
     src: "/media/cluster-3.webp",
-    alt: "Il dott. Dell'Avanzato durante un intervento",
     width: 300,
     height: 400,
     position: "bottom-[6%] left-[11%] w-[9.5rem]",
@@ -46,7 +46,7 @@ const STRENGTH = 0.58;
  * quando il cursore passa vicino. Sotto md il cluster diventa una riga statica:
  * a quella larghezza le immagini flottanti coprirebbero il testo.
  */
-export function Endolift() {
+export function Endolift({ locale }: { locale: Locale }) {
   const stage = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -135,21 +135,21 @@ export function Endolift() {
           ))}
 
           <Reveal className="relative z-10 max-w-[40rem] text-center">
+            {/* Niente <sup> dentro .u-label: il letter-spacing dell'etichetta si
+                applica anche dopo l'ultima lettera e stacca il simbolo. Il glifo ®
+                è già disegnato in apice — inline, come ovunque nel sito. */}
             <h2 id="endolift" className="u-label text-ink-soft" data-reveal>
-              Endolift<sup className="text-[0.6em]">®</sup>
+              {copy.kicker[locale]}
             </h2>
             <blockquote className="mt-8" data-reveal>
               <p className="u-lead text-balance text-ink">
-                «La passione per le tecnologie medicali mi ha portato ad essere tra
-                i primi in Italia nel 2002 ad eseguire la liposuzione laser
-                assistita, e nel 2005 a sviluppare personalmente la metodica
-                Endolift®.»
+                {copy.quote[locale]}
               </p>
             </blockquote>
             <div className="mt-12 flex justify-center" data-reveal>
-              <Link href="/trattamenti" className="link-rule u-label">
+              <Link href={href("treatments", locale)} className="link-rule u-label">
                 <span aria-hidden="true" className="rule" />
-                La metodica Endolift<sup className="text-[0.6em]">®</sup>
+                {copy.cta[locale]}
               </Link>
             </div>
           </Reveal>
@@ -157,11 +157,11 @@ export function Endolift() {
 
         {/* Sotto md il cluster torna nel flusso, in riga. */}
         <ul className="mt-12 flex items-end justify-center gap-4 md:hidden">
-          {CLUSTER.map((item) => (
+          {CLUSTER.map((item, i) => (
             <li key={item.src} className="w-[7.5rem]">
               <Image
                 src={item.src}
-                alt={item.alt}
+                alt={endoliftClusterAlt[i][locale]}
                 width={item.width}
                 height={item.height}
                 sizes="120px"

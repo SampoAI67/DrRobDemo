@@ -4,7 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
-import { CONCERNS } from "@/lib/content";
+import { CONCERNS } from "@/content/concerns";
+import { concerns as copy } from "@/content/home";
+import type { Locale } from "@/lib/i18n";
+import { href } from "@/lib/routes";
 
 /**
  * S4 — da cosa vuoi partire.
@@ -13,18 +16,17 @@ import { CONCERNS } from "@/lib/content";
  * un'aggiunta, non il modo di accedere al contenuto. La prima voce è attiva di
  * default, così anche senza puntatore la colonna sinistra mostra qualcosa.
  */
-export function Concerns() {
+export function Concerns({ locale }: { locale: Locale }) {
   const [active, setActive] = useState(0);
 
   return (
     <section className="section bg-ground" aria-labelledby="da-dove-partire">
       <Reveal className="wrap">
         <h2 id="da-dove-partire" className="u-label text-ink-soft" data-reveal>
-          Da cosa vuoi partire
+          {copy.kicker[locale]}
         </h2>
         <p className="u-lead mt-6 max-w-[34ch] text-ink" data-reveal>
-          Ogni percorso comincia da un&rsquo;esigenza precisa. La visita stabilisce
-          se e come intervenire.
+          {copy.lead[locale]}
         </p>
 
         <div
@@ -37,7 +39,7 @@ export function Concerns() {
                 <Image
                   key={c.n}
                   src={c.image}
-                  alt={i === active ? c.alt : ""}
+                  alt={i === active ? c.alt[locale] : ""}
                   aria-hidden={i === active ? undefined : true}
                   fill
                   sizes="(min-width: 768px) 40vw, 90vw"
@@ -53,7 +55,7 @@ export function Concerns() {
             {CONCERNS.map((c, i) => (
               <li key={c.n} className="border-t border-line last:border-b">
                 <Link
-                  href="/trattamenti"
+                  href={href("treatments", locale)}
                   onPointerEnter={() => setActive(i)}
                   onFocus={() => setActive(i)}
                   className="group flex min-h-14 items-baseline gap-6 py-4"
@@ -70,7 +72,7 @@ export function Concerns() {
                       i === active ? "text-accent" : "text-ink"
                     }`}
                   >
-                    {c.label}
+                    {c.label[locale]}
                   </span>
                 </Link>
               </li>

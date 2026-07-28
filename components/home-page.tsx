@@ -5,17 +5,19 @@ import { Concerns } from "@/components/sections/concerns";
 import { Endolift } from "@/components/sections/endolift";
 import { Method } from "@/components/sections/method";
 import { Proof } from "@/components/sections/proof";
+import type { Locale } from "@/lib/i18n";
 
-export default function Home() {
+/** Le sette sezioni della home, condivise fra le due lingue. */
+export function HomePage({ locale }: { locale: Locale }) {
   return (
     <main id="contenuto">
-      <Hero />
-      <Statement />
-      <Treatments />
-      <Concerns />
-      <Endolift />
-      <Method />
-      <Proof />
+      <Hero locale={locale} />
+      <Statement locale={locale} />
+      <Treatments locale={locale} />
+      <Concerns locale={locale} />
+      <Endolift locale={locale} />
+      <Method locale={locale} />
+      <Proof locale={locale} />
     </main>
   );
 }
