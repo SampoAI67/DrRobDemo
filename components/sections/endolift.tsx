@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Reveal } from "@/components/reveal";
 import { media } from "@/lib/media";
@@ -42,6 +43,29 @@ const RADIUS = 210; // px entro cui il cursore magnetizza
 const STRENGTH = 0.58;
 
 /**
+ * Composizione del cluster sotto md.
+ *
+ * Prima qui c'era una riga allineata a `items-end`: tre immagini della stessa
+ * altezza, ferme, in fondo a mezza schermata di vuoto. Ora ricalca l'assetto
+ * desktop — una grande a sinistra in alto, una stretta a destra più in basso,
+ * una terza sfalsata sotto che si incastra fra le due — con la griglia a 12
+ * colonne invece delle posizioni assolute: a 390px il testo occupa tutta la
+ * larghezza, e immagini in `absolute` gli finirebbero sopra.
+ *
+ * `max` non supera mai la larghezza che ogni immagine ha su desktop: le
+ * sorgenti arrivano a 400px (cluster-1) e 300px (le altre due), e il layout si
+ * adatta al file, mai il contrario (`public/media/INVENTARIO.md`).
+ *
+ * `parallax` è l'ampiezza in px della deriva legata allo scroll: valori diversi
+ * fanno scorrere le tre immagini a velocità diverse.
+ */
+const MOBILE = [
+  { area: "col-start-1 col-span-6 row-start-1", max: "max-w-[10.5rem]", parallax: 34 },
+  { area: "col-start-8 col-span-5 row-start-1 mt-[22%]", max: "max-w-[8.75rem]", parallax: 16 },
+  { area: "col-start-3 col-span-5 row-start-2 -mt-[10%]", max: "max-w-[9.5rem]", parallax: 26 },
+];
+
+/**
  * S5 — Endolift®.
  *
  * Statement grande e tre immagini che derivano col mouse e si lasciano attrarre
@@ -51,7 +75,61 @@ const STRENGTH = 0.58;
 export function Endolift({ locale }: { locale: Locale }) {
   const stage = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileStage = useRef<HTMLUListElement>(null);
+  const mobileItems = useRef<(HTMLDivElement | null)[]>([]);
   const endoliftSlug = bySlug("endolift")?.slug[locale];
+
+  /**
+   * Deriva a scroll del cluster mobile.
+   *
+   * È la controparte dell'effetto mouse di sopra: lì le immagini inseguono il
+   * cursore con `quickTo`, qui inseguono lo scroll. `scrub` numerico è ciò che
+   * dà il rimbalzo — l'animazione non si incolla alla posizione di scroll ma la
+   * raggiunge in mezzo secondo, quindi le immagini partono, sfilano oltre e si
+   * assestano, esattamente come l'inerzia di `quickTo` sul desktop. Con
+   * `scrub: true` seguirebbero lo scroll rigidamente e sarebbe un altro effetto.
+   *
+   * Ampiezze diverse per immagine: è quello che rende la parallasse leggibile,
+   * altrimenti si muoverebbero come un blocco solo.
+   */
+  useGSAP(
+    () => {
+      const root = mobileStage.current;
+      if (!root) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // matchMedia e non un controllo sulla larghezza una tantum: al passaggio
+      // sopra md GSAP disfa da sé questi ScrollTrigger, che su desktop
+      // agirebbero su nodi nascosti e sporcherebbero i calcoli di posizione.
+      const mm = gsap.matchMedia();
+
+      mm.add("(max-width: 767px)", () => {
+        mobileItems.current.forEach((el, i) => {
+          if (!el) return;
+
+          gsap.fromTo(
+            el,
+            { y: MOBILE[i].parallax },
+            {
+              y: -MOBILE[i].parallax,
+              ease: "none",
+              scrollTrigger: {
+                trigger: root,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.5,
+              },
+            },
+          );
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: mobileStage },
+  );
 
   useGSAP(
     () => {
@@ -114,7 +192,10 @@ export function Endolift({ locale }: { locale: Locale }) {
       <div className="wrap">
         <div
           ref={stage}
-          className="relative flex min-h-[34rem] items-center justify-center py-4"
+          // L'altezza minima serve a fare spazio al cluster in `absolute`, che
+          // esiste solo da md: sotto, lasciava mezza schermata di vuoto sopra e
+          // sotto lo statement.
+          className="relative flex items-center justify-center py-4 md:min-h-[34rem]"
         >
           {/* Cluster fluttuante — decorativo, quindi fuori dal flusso e solo da md. */}
           {CLUSTER.map((item, i) => (
@@ -167,21 +248,36 @@ export function Endolift({ locale }: { locale: Locale }) {
           </Reveal>
         </div>
 
-        {/* Sotto md il cluster torna nel flusso, in riga. */}
-        <ul className="mt-12 flex items-end justify-center gap-4 md:hidden">
-          {CLUSTER.map((item, i) => (
-            <li key={item.src} className="w-[7.5rem]">
-              <Image
-                src={media(item.src)}
-                alt={endoliftClusterAlt[i][locale]}
-                width={item.width}
-                height={item.height}
-                sizes="120px"
-                className="h-auto w-full object-cover"
-              />
-            </li>
-          ))}
-        </ul>
+        {/* Sotto md il cluster torna nel flusso, sfalsato invece che in riga.
+            L'entrata la dà `Reveal` sul <li>, la deriva a scroll il <div>
+            interno: due elementi annidati perché entrambe le animazioni
+            scrivono su `y`, e sullo stesso nodo l'una sovrascriverebbe l'altra. */}
+        <Reveal className="md:hidden">
+          <ul
+            ref={mobileStage}
+            className="mt-14 grid grid-cols-12 items-start gap-x-3"
+          >
+            {CLUSTER.map((item, i) => (
+              <li key={item.src} className={MOBILE[i].area} data-reveal>
+                <div
+                  ref={(el) => {
+                    mobileItems.current[i] = el;
+                  }}
+                  className={MOBILE[i].max}
+                >
+                  <Image
+                    src={media(item.src)}
+                    alt={endoliftClusterAlt[i][locale]}
+                    width={item.width}
+                    height={item.height}
+                    sizes="(max-width: 767px) 45vw, 170px"
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );
