@@ -9,7 +9,7 @@ import { useGSAP } from "@gsap/react";
 import { Reveal } from "@/components/reveal";
 import { media } from "@/lib/media";
 import { bySlug } from "@/content/treatments";
-import { endolift as copy, endoliftClusterAlt } from "@/content/home";
+import { endolift as copy } from "@/content/home";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 
@@ -60,10 +60,26 @@ const STRENGTH = 0.58;
  * fanno scorrere le tre immagini a velocità diverse.
  */
 const MOBILE = [
-  { area: "col-start-1 col-span-6 row-start-1", max: "max-w-[10.5rem]", parallax: 34 },
-  { area: "col-start-8 col-span-5 row-start-1 mt-[22%]", max: "max-w-[8.75rem]", parallax: 16 },
-  { area: "col-start-3 col-span-5 row-start-2 -mt-[10%]", max: "max-w-[9.5rem]", parallax: 26 },
+  { position: "left-[-4%] top-[1%] w-[44%] max-w-[10.5rem]", parallax: 34 },
+  { position: "right-[-3%] top-[19%] w-[37%] max-w-[8.75rem]", parallax: 16 },
+  { position: "bottom-[1%] left-[9%] w-[40%] max-w-[9.5rem]", parallax: 26 },
 ];
+
+/**
+ * Opacità del cluster mobile, che sta **sotto** il testo.
+ *
+ * Il vincolo non è il corpo del testo — l'ink è quasi nero e sopravvive a
+ * fondi molto più scuri del bone — ma il link «La metodica Endolift®»:
+ * l'accento `#00747F` sul fondo chiaro dà 4,9:1, cioè appena sopra la soglia
+ * AA di 4,5. Qualunque immagine dietro quel link lo fa scendere sotto, quindi
+ * il terzo elemento è posizionato in modo da lasciargli libera la fascia, e
+ * non è un dettaglio estetico: è la ragione per cui sta lì.
+ *
+ * Il valore è misurato sui pixel con `tools/contrast-endolift.py`, non scelto
+ * a occhio: sopra una foto il controllo sul DOM confronta con
+ * `background-color`, che lì è trasparente, e restituisce un falso «a posto».
+ */
+const MOBILE_OPACITY = 0.28;
 
 /**
  * S5 — Endolift®.
@@ -75,7 +91,7 @@ const MOBILE = [
 export function Endolift({ locale }: { locale: Locale }) {
   const stage = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLDivElement | null)[]>([]);
-  const mobileStage = useRef<HTMLUListElement>(null);
+  const mobileStage = useRef<HTMLDivElement>(null);
   const mobileItems = useRef<(HTMLDivElement | null)[]>([]);
   const endoliftSlug = bySlug("endolift")?.slug[locale];
 
@@ -94,8 +110,11 @@ export function Endolift({ locale }: { locale: Locale }) {
    */
   useGSAP(
     () => {
-      const root = mobileStage.current;
-      if (!root) return;
+      // Il trigger è il palco, non il contenitore delle immagini: quello ha
+      // solo figli in `absolute`, quindi altezza zero, e l'intervallo
+      // «top bottom → bottom top» collasserebbe in un punto.
+      const root = stage.current;
+      if (!root || !mobileStage.current) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       gsap.registerPlugin(ScrollTrigger);
@@ -192,11 +211,51 @@ export function Endolift({ locale }: { locale: Locale }) {
       <div className="wrap">
         <div
           ref={stage}
-          // L'altezza minima serve a fare spazio al cluster in `absolute`, che
-          // esiste solo da md: sotto, lasciava mezza schermata di vuoto sopra e
-          // sotto lo statement.
-          className="relative flex items-center justify-center py-4 md:min-h-[34rem]"
+          // Il `pb` mobile non è spaziatura: alza il blocco di testo dentro il
+          // palco e libera in fondo una fascia per la terza immagine, così il
+          // link in accento non le finisce sopra. Vedi `MOBILE_OPACITY`.
+          className="relative flex min-h-[36rem] items-center justify-center pt-4 pb-40 md:min-h-[34rem] md:py-4"
         >
+          {/* Cluster mobile: stesso assetto sfalsato di prima, ma dietro il
+              testo invece che sotto.
+
+              Nessun z-index, come il cluster desktop qui sotto: sta dietro
+              perché lo statement ha `relative z-10`. Un `-z-10` sembrerebbe
+              più esplicito ma le rende invisibili — un indice negativo dipinge
+              prima degli sfondi di blocco, e il `bg-ground` della sezione ci
+              passa sopra. Verificato: scatto senza una sola immagine.
+
+              Decorativo come su desktop — `alt=""` e `aria-hidden` — perché a
+              questa opacità è una texture: far annunciare tre descrizioni di
+              fotografie in mezzo a una citazione sarebbe solo rumore. */}
+          <Reveal className="md:hidden">
+            <div ref={mobileStage} aria-hidden="true">
+              {CLUSTER.map((item, i) => (
+                <div
+                  key={item.src}
+                  className={`pointer-events-none absolute ${MOBILE[i].position}`}
+                  data-reveal
+                >
+                  <div
+                    ref={(el) => {
+                      mobileItems.current[i] = el;
+                    }}
+                    style={{ opacity: MOBILE_OPACITY }}
+                  >
+                    <Image
+                      src={media(item.src)}
+                      alt=""
+                      width={item.width}
+                      height={item.height}
+                      sizes="(max-width: 767px) 45vw, 170px"
+                      className="h-auto w-full object-cover"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
           {/* Cluster fluttuante — decorativo, quindi fuori dal flusso e solo da md. */}
           {CLUSTER.map((item, i) => (
             <div
@@ -248,36 +307,6 @@ export function Endolift({ locale }: { locale: Locale }) {
           </Reveal>
         </div>
 
-        {/* Sotto md il cluster torna nel flusso, sfalsato invece che in riga.
-            L'entrata la dà `Reveal` sul <li>, la deriva a scroll il <div>
-            interno: due elementi annidati perché entrambe le animazioni
-            scrivono su `y`, e sullo stesso nodo l'una sovrascriverebbe l'altra. */}
-        <Reveal className="md:hidden">
-          <ul
-            ref={mobileStage}
-            className="mt-14 grid grid-cols-12 items-start gap-x-3"
-          >
-            {CLUSTER.map((item, i) => (
-              <li key={item.src} className={MOBILE[i].area} data-reveal>
-                <div
-                  ref={(el) => {
-                    mobileItems.current[i] = el;
-                  }}
-                  className={MOBILE[i].max}
-                >
-                  <Image
-                    src={media(item.src)}
-                    alt={endoliftClusterAlt[i][locale]}
-                    width={item.width}
-                    height={item.height}
-                    sizes="(max-width: 767px) 45vw, 170px"
-                    className="h-auto w-full object-cover"
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
       </div>
     </section>
   );
