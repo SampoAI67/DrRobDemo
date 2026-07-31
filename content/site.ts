@@ -18,13 +18,15 @@ export const studio = {
   phone: "+39 02 7202 3474",
   phoneHref: "+390272023474",
   /**
-   * Recapito indicato dal cliente. È una casella personale su dominio gratuito:
-   * prima del go-live andrebbe sostituita con un indirizzo sul dominio dello
-   * studio, che è più credibile e non lega la corrispondenza clinica a un
-   * provider di posta consumer. Finché resta questo, in pagina non si stampa mai
-   * in chiaro — si espone solo come destinazione di un `mailto:`.
+   * Casella sul dominio dello studio. È quella che il sito del cliente usa già
+   * nei suoi `mailto:`; il `dellavanzato@hotmail.it` che compare una volta nel
+   * suo footer è una casella personale su dominio gratuito, e non è il posto
+   * dove far arrivare corrispondenza clinica.
+   *
+   * In pagina non si stampa mai in chiaro: si espone solo come destinazione del
+   * `mailto:`, che è già raccolto dai crawler di spam ma almeno non invita.
    */
-  email: "dellavanzato@hotmail.it",
+  email: "info@dellavanzatoroberto.it",
   /** Coordinate di Via Andegari 18 da OpenStreetMap (Nominatim), non stimate. */
   lat: 45.46904,
   lon: 9.19143,
