@@ -17,6 +17,17 @@ export const studio = {
   city: "Milano",
   phone: "+39 02 7202 3474",
   phoneHref: "+390272023474",
+  /**
+   * Recapito indicato dal cliente. È una casella personale su dominio gratuito:
+   * prima del go-live andrebbe sostituita con un indirizzo sul dominio dello
+   * studio, che è più credibile e non lega la corrispondenza clinica a un
+   * provider di posta consumer. Finché resta questo, in pagina non si stampa mai
+   * in chiaro — si espone solo come destinazione di un `mailto:`.
+   */
+  email: "dellavanzato@hotmail.it",
+  /** Coordinate di Via Andegari 18 da OpenStreetMap (Nominatim), non stimate. */
+  lat: 45.46904,
+  lon: 9.19143,
   vatId: "0977885100",
   register: "47924",
 } as const;
@@ -34,6 +45,8 @@ export const navLabel: Record<RouteKey, Localized<string>> = {
 export const ui = {
   wordmark: { it: "Dott. Dell’Avanzato", en: "Dr Dell’Avanzato" },
   book: { it: "Prenota una visita", en: "Book a consultation" },
+  call: { it: "Chiama lo studio", en: "Call the practice" },
+  write: { it: "Scrivi allo studio", en: "Email the practice" },
   mainNav: { it: "Principale", en: "Main" },
   siteNav: { it: "Pagine del sito", en: "Site pages" },
   skipToContent: { it: "Vai al contenuto", en: "Skip to content" },
@@ -148,9 +161,10 @@ export const credentials: CredentialBlock[][] = [
     },
     {
       label: { it: "Da confermare", en: "To be confirmed" },
+      // L'e-mail è uscita da qui: il cliente l'ha indicata. Restano le tre voci
+      // che nessuno ha ancora confermato — non si inventano (vedi intestazione).
       lines: [
         { it: "Orari di studio", en: "Opening hours" },
-        { it: "Indirizzo e-mail pubblico", en: "Public e-mail address" },
         { it: "Direttore sanitario", en: "Medical director" },
         { it: "Elenco completo delle sedi", en: "Full list of locations" },
       ],

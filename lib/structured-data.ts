@@ -14,10 +14,11 @@ import { studio } from "@/content/site";
 import type { Area, Treatment } from "@/content/treatments";
 import { HTML_LANG, type Locale } from "@/lib/i18n";
 import { mediaFile } from "@/lib/media";
-import { SITE_URL } from "@/lib/metadata";
+import { absolute } from "@/lib/metadata";
 import { href } from "@/lib/routes";
 
-const abs = (path: string): string => new URL(path, SITE_URL).toString();
+/** `absolute()` regge sia le rotte nude di `href()` sia i percorsi di `mediaFile()`. */
+const abs = absolute;
 
 /**
  * `procedureType` solo dove l'area lo dichiara senza ambiguità. Medicina estetica e

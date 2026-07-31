@@ -16,9 +16,21 @@ export type BioSection = {
 };
 
 export const bioContent = {
+  /**
+   * Titolo della scheda del browser. Distinto da `hero.title`, che è il nome del
+   * medico: usare quello produceva «Dr. Roberto Dell'Avanzato — Dr. Roberto
+   * Dell'Avanzato», con la metà utile del titolo sprecata in un doppione.
+   */
+  pageTitle: { it: "Biografia", en: "Biography" },
+
   hero: {
     eyebrow: { it: "Profilo Professionale", en: "Professional Profile" },
     title: { it: "Dr. Roberto Dell’Avanzato", en: "Dr Roberto Dell’Avanzato" },
+    /** Descrive la foto, non ripete il titolo: il ritratto formale su fondo grigio. */
+    alt: {
+      it: "Ritratto del dott. Roberto Dell’Avanzato in giacca e cravatta, su fondo grigio.",
+      en: "Portrait of Dr Roberto Dell’Avanzato in a suit and tie against a grey background.",
+    },
     subtitle: {
       it: "Medico Chirurgo Specialista in Chirurgia Generale, Master Universitario in Medicina e Chirurgia Estetica. Ricercatore e docente nell’ambito delle tecnologie laser e mini-invasive.",
       en: "Surgeon specializing in General Surgery, University Master's Degree in Aesthetic Medicine and Surgery. Researcher and lecturer in laser and minimally invasive technologies.",
@@ -27,6 +39,19 @@ export const bioContent = {
   },
   overview: {
     title: { it: "Esperienza e Formazione Clinica", en: "Experience and Clinical Background" },
+    /**
+     * ⚠️ Il nome del file è ereditato dal sito del cliente
+     * (`dr-dellavanzato-missioni-umanitarie.jpg`) ma **non descrive il
+     * contenuto**: l'immagine ritrae il medico in camice alla scrivania del suo
+     * studio, non una missione umanitaria. Stava infatti a corredo della sezione
+     * sulle missioni in Pakistan, dove il contesto la faceva leggere come una
+     * fotografia di quelle missioni. Qui illustra ciò che mostra davvero.
+     */
+    image: "bio-missioni",
+    alt: {
+      it: "Il dott. Dell’Avanzato in camice, seduto alla scrivania del suo studio.",
+      en: "Dr Dell’Avanzato in a white coat, seated at the desk of his practice.",
+    },
     paragraphs: [
       {
         it: "Il Dr. Roberto Dell’Avanzato opera nel campo della medicina e della chirurgia estetica con una solida formazione specialistica. Dopo la laurea in Medicina e Chirurgia, ha conseguito la Specializzazione in Chirurgia Generale con lode e successivamente il Master Universitario di II Livello in Medicina Estetica e Chirurgia Estetica.",
@@ -90,7 +115,11 @@ export const bioContent = {
         en: "For his humanitarian contribution he was awarded the Certificate of Excellence by the Pakistan Medical Association and the Certificate of Merit by the Combined Military Hospital of Islamabad.",
       },
     ],
-    image: "bio-missioni",
+    // Nessuna immagine. Non ne esiste una delle missioni: l'unica in archivio con
+    // quel nome è un ritratto in studio (vedi `overview.image`), e accostarla a un
+    // testo su donne sfigurate con l'acido la farebbe leggere come documentazione
+    // di quelle spedizioni. Se il cliente fornisce fotografie vere delle missioni
+    // si aggiungono qui; nel frattempo il testo regge da solo.
   },
   ethics: {
     title: { it: "Approccio Clinico ed Etica Professionale", en: "Clinical Approach and Ethics" },

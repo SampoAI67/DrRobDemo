@@ -1,133 +1,133 @@
 /**
- * Contenuti della pagina Rassegna Stampa.
+ * Contenuti della pagina Rassegna stampa.
  *
- * Articoli scientifici, interviste su quotidiani/periodici, atti di congressi
- * e pubblicazioni divulgative.
+ * ⚠️ Questo file è già stato scritto una volta **inventando**: testate come
+ * «Journal of Aesthetic Communication» o «Medical SPA & Wellness Journal» non
+ * esistono, le date 2020-2024 erano immaginate (i PDF sono caricati nel 2019) e
+ * ogni abbinamento titolo↔documento era sbagliato. Su un sito sanitario una
+ * fonte attribuita a vuoto è un problema legale, non un refuso.
+ *
+ * Quello che segue è estratto da `dellavanzatoroberto.it/rassegna-stampa/`, che
+ * pubblica **sette** articoli. Per ciascuno il sito del cliente dà un titolo, un
+ * sottotitolo e un PDF: nient'altro. Quindi qui non compaiono né testata né data
+ * — non perché non contino, ma perché non risultano. Se il cliente le fornisce
+ * si aggiungono i campi `source` e `date` e la scheda li mostra.
+ *
+ * **Titoli e sottotitoli sono verbatim**, con la sola normalizzazione del
+ * maiuscolo (l'originale è tutto in capslock). Sono citazioni di documenti
+ * pubblicati, non testo redazionale: riscriverli per addolcire «eccellenti
+ * risultati» o «innovativo» significherebbe attribuire al documento parole che
+ * non contiene. La questione è segnalata al cliente in `CORREZIONI-REGISTRO.md`
+ * §13, ed è sua la decisione se lasciarli, tagliarli o cambiare documento.
+ *
+ * I PDF stanno in `public/stampa/`, scaricati dal WordPress del cliente e
+ * rinominati in modo leggibile. Prima puntavano a `/app/uploads/2019/11/…`, che
+ * su questo sito è un 404: percorso del vecchio WordPress, senza `basePath`, e
+ * per giunta due dei sette file stanno sotto `2019/12`.
  */
 
 import type { Localized } from "@/lib/i18n";
 
 export type PressItem = {
   id: string;
-  title: Localized<string>;
-  source: string;
-  date: string;
-  category: "stampa" | "tv" | "congresso" | "pubblicazione";
-  description: Localized<string>;
-  url?: string;
-  file?: string;
+  /** Verbatim dal documento, nella sua lingua: non si traduce una citazione. */
+  title: string;
+  /** Sottotitolo del documento. Tradotto per i lettori inglesi, il titolo no. */
+  standfirst: Localized<string>;
+  /** Nome del file in `public/stampa/`. */
+  file: string;
 };
 
 export const pressContent = {
   hero: {
-    eyebrow: { it: "Media & Pubblicazioni", en: "Media & Publications" },
-    title: { it: "Rassegna Stampa", en: "Press & Media" },
+    eyebrow: { it: "Pubblicazioni", en: "Publications" },
+    title: { it: "Rassegna stampa", en: "Press" },
     subtitle: {
-      it: "Articoli, contributi scientifici, interviste e interventi a congressi internazionali sulla medicina e chirurgia estetica mini-invasiva.",
-      en: "Articles, scientific contributions, interviews, and congress presentations on minimally invasive aesthetic surgery and medicine.",
+      it: "Gli articoli pubblicati sulle metodiche laser e mini-invasive, consultabili per intero.",
+      en: "Published articles on laser and minimally invasive methods, available to read in full.",
     },
   },
-  filters: {
-    all: { it: "Tutte le pubblicazioni", en: "All publications" },
-    stampa: { it: "Stampa & Riviste", en: "Press & Magazines" },
-    tv: { it: "Interviste & Media", en: "Interviews & Media" },
-    congresso: { it: "Congressi & Atti", en: "Congresses & Proceedings" },
-    pubblicazione: { it: "Studi Clinici", en: "Clinical Studies" },
+
+  /** I documenti sono in italiano: per il lettore inglese va detto prima. */
+  languageNote: {
+    it: "",
+    en: "The documents are in Italian.",
   },
+
   actions: {
-    readPdf: { it: "Leggi Documento (PDF)", en: "Read Document (PDF)" },
-    viewArticle: { it: "Visualizza Articolo", en: "View Article" },
-    proceedings: { it: "Atti di Congresso / Pubblicazione", en: "Congress Proceedings / Publication" },
+    readPdf: { it: "Leggi l’articolo", en: "Read the article" },
+    /** Letto dagli screen reader al posto dell'etichetta generica di ogni card. */
+    readPdfAria: {
+      it: "Leggi l’articolo (PDF)",
+      en: "Read the article (PDF)",
+    },
+    pdfMeta: { it: "PDF", en: "PDF" },
   },
+
   items: [
     {
-      id: "press-endolift-lifting",
-      title: {
-        it: "Endolift®: la metodica laser per il sollevamento dei tessuti senza bisturi",
-        en: "Endolift®: the laser method for tissue lifting without surgery",
+      id: "face-building",
+      title: "Face-building",
+      standfirst: {
+        it: "Un innovativo protocollo di ringiovanimento del volto con trattamento combinato di Endolift® e Ultherapy®.",
+        en: "An innovative facial rejuvenation protocol combining Endolift® and Ultherapy®.",
       },
-      source: "Stampa Medico-Scientifica",
-      date: "2024",
-      category: "pubblicazione",
-      description: {
-        it: "Approfondimento clinico sulla tecnica Endolift®, vettori di trazione laser e protocolli di applicazione nel terzo inferiore del volto.",
-        en: "Clinical in-depth article on the Endolift® technique, laser traction vectors, and application protocols for the lower third of the face.",
-      },
-      file: "articolo-Endolift_gennaio.pdf",
+      file: "face-building-endolift-ultherapy.pdf",
     },
     {
-      id: "press-eufoton-lasers",
-      title: {
-        it: "Innovazione nelle tecnologie laser a lunghezza d'onda selettiva in medicina estetica",
-        en: "Innovation in selective wavelength laser technologies in aesthetic medicine",
+      id: "dieci-anni-lipolisi",
+      title:
+        "10 anni di lipolisi laser assistita con laser a diodi utilizzando una o più lunghezze d’onda simultanee",
+      standfirst: {
+        it: "Risultati preliminari del nuovo Laser Spectrum con algoritmo Dual Boost®.",
+        en: "Preliminary results of the new Laser Spectrum with the Dual Boost® algorithm.",
       },
-      source: "Rassegna di Medicina Estetica",
-      date: "2023",
-      category: "stampa",
-      description: {
-        it: "Articolo dedicato all'integrazione delle lunghezze d'onda laser per la fototermolisi selettiva e la stimolazione del collagene dermico.",
-        en: "Article dedicated to integrating laser wavelengths for selective photothermolysis and dermal collagen stimulation.",
-      },
-      file: "articolo-eufoton.pdf",
+      file: "dieci-anni-lipolisi-laser-assistita.pdf",
     },
     {
-      id: "press-informazione-scientifica",
-      title: {
-        it: "Informazione scientifica e divulgazione etica nella chirurgia estetica",
-        en: "Scientific information and ethical communication in aesthetic surgery",
+      id: "endolift-doppio-mento",
+      title: "Il laser che corregge il doppio mento e le borse sotto gli occhi",
+      standfirst: {
+        it: "Si chiama Endolift, è una tecnica non invasiva per contrastare il rilassamento della pelle.",
+        en: "It is called Endolift, a non-invasive technique to counter skin laxity.",
       },
-      source: "Journal of Aesthetic Communication",
-      date: "2022",
-      category: "stampa",
-      description: {
-        it: "Riflessione sugli standard d'informazione al paziente, la trasparenza clinica e il rispetto dei codici deontologici.",
-        en: "Perspective on patient information standards, clinical transparency, and adherence to medical ethics codes.",
-      },
-      file: "articolo-Informazione-scientifica.pdf",
+      file: "endolift-doppio-mento-borse.pdf",
     },
     {
-      id: "press-nanosoft-intradermico",
-      title: {
-        it: "Dispositivi iniettivi micro-ago Nanosoft per la biorivitalizzazione perioculare",
-        en: "Nanosoft micro-needle injection devices for periocular biorevitalisation",
+      id: "endolift-laser-dieci-anni",
+      title: "Endolift® laser",
+      standfirst: {
+        it: "10 anni di eccellenti risultati di una metodica tutta italiana per il ringiovanimento «soft» del volto, del collo e del corpo.",
+        en: "Ten years of excellent results from an entirely Italian method for the ‘soft’ rejuvenation of the face, neck and body.",
       },
-      source: "Dermatologia Clinica & Estetica",
-      date: "2021",
-      category: "pubblicazione",
-      description: {
-        it: "Studio sull'impiego di micro-aghi da 0,6 mm per la somministrazione controllata nelle aree sensibili del volto.",
-        en: "Study on using 0.6 mm micro-needles for controlled administration in sensitive facial areas.",
-      },
-      file: "L’INNOVATIVO-DISPOSITIVO-INIETTIVO-INTRADERMICO-NANOSOFT.pdf",
+      file: "endolift-laser-dieci-anni.pdf",
     },
     {
-      id: "press-ginecologia-estetica",
-      title: {
-        it: "Tecnologie laser e trattamenti rigenerativi in ginecologia funzionale ed estetica",
-        en: "Laser technologies and regenerative treatments in functional aesthetic gynecology",
+      id: "protocolli-shape",
+      title: "Per una medicina estetica all’avanguardia e senza dolore",
+      standfirst: {
+        it: "La mia esperienza di lavoro con un innovativo device elettronico e con nuovi protocolli S.H.A.P.E.",
+        en: "My experience working with an innovative electronic device and the new S.H.A.P.E. protocols.",
       },
-      source: "Medical SPA & Wellness Journal",
-      date: "2020",
-      category: "congresso",
-      description: {
-        it: "Presentazione dei protocolli non invasivi a supporto della salute e del benessere intimo femminile.",
-        en: "Presentation of non-invasive protocols supporting female intimate health and wellness.",
-      },
-      file: "La-soluzione-più-intima-per-una-femminilità-senza-tempo.pdf",
+      file: "medicina-estetica-protocolli-shape.pdf",
     },
     {
-      id: "press-follador-award",
-      title: {
-        it: "Premio Enrico Follador 2018 per la ricerca sulle metodiche lifting non chirurgiche",
-        en: "2018 Enrico Follador Award for research on non-surgical lifting methods",
+      id: "soluzione-intima",
+      title: "La soluzione più «intima»",
+      standfirst: {
+        it: "Per una femminilità senza tempo.",
+        en: "For timeless femininity.",
       },
-      source: "Congresso Internazionale di Medicina e Chirurgia Estetica, Bologna",
-      date: "2018",
-      category: "congresso",
-      description: {
-        it: "Riconoscimento scientifico conferito per la relazione clinica sulla combinazione delle tecnologie Endolift® e Ultherapy®.",
-        en: "Scientific award presented for the clinical lecture on combining Endolift® and Ultherapy® technologies.",
+      file: "soluzione-intima-femminilita.pdf",
+    },
+    {
+      id: "nanosoft",
+      title: "L’innovativo dispositivo iniettivo intradermico Nanosoft®",
+      standfirst: {
+        it: "Dedicato alle aree delicate come le palpebre.",
+        en: "Designed for delicate areas such as the eyelids.",
       },
+      file: "nanosoft-dispositivo-intradermico.pdf",
     },
   ] satisfies PressItem[],
 };

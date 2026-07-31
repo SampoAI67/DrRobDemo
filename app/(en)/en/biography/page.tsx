@@ -7,7 +7,7 @@ import { buildMetadata } from "@/lib/metadata";
 export const metadata: Metadata = buildMetadata({
   locale: "en",
   routeKey: "biography",
-  title: `${bioContent.hero.title.en} — ${studio.name}`,
+  title: `${bioContent.pageTitle.en} — ${studio.name}`,
   description: bioContent.hero.subtitle.en,
 });
 

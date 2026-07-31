@@ -36,6 +36,14 @@ jobs:
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_BASE_PATH: "/DrRobDemo"
+          # Senza questo, canonical e og:image restano sul dominio di produzione
+          # (il default in lib/metadata.ts) e l'anteprima social della demo esce
+          # senza immagine, perche' quel file li' non esiste ancora.
+          NEXT_PUBLIC_SITE_URL: "https://sampoai67.github.io/DrRobDemo"
+          # NEXT_PUBLIC_CONTACT_ENDPOINT non e' impostata: il modulo contatti
+          # ripiega sul programma di posta dell'utente e lo dichiara in pagina.
+          # Quando c'e' un endpoint, va aggiunta qui e il modulo cambia da solo
+          # etichette, conferma e nota sui dati.
         run: npm run build
 
       - name: Upload artifact

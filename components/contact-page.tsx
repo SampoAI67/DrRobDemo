@@ -6,122 +6,111 @@ import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { contactContent as copy } from "@/content/contact";
-import { navLabel, studio } from "@/content/site";
+import { navLabel, studio, ui } from "@/content/site";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { breadcrumbList } from "@/lib/structured-data";
 
-function MapPinIcon() {
-  return (
-    <svg className="h-6 w-6 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  );
-}
+/**
+ * Endpoint esterno per l'invio del modulo, deciso al deploy.
+ *
+ * L'export è statico: senza endpoint nessun server riceve niente, e l'unico
+ * canale che resta è il programma di posta dell'utente. Le due modalità non si
+ * limitano a cambiare la destinazione — cambiano cosa il sito può onestamente
+ * dire di aver fatto, quindi cambiano l'etichetta del pulsante, la conferma e
+ * la nota sui dati. Va letto fuori dal componente: Next lo sostituisce a build
+ * time, non è una variabile che cambia a runtime.
+ */
+const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT;
 
-function NavigationIcon() {
-  return (
-    <svg className="h-6 w-6 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-    </svg>
-  );
-}
+type Status = "idle" | "sending" | "done" | "error";
 
-function PhoneIcon() {
-  return (
-    <svg className="h-6 w-6 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-    </svg>
-  );
-}
+const FIELD =
+  "mt-2 w-full border border-line bg-ground px-4 py-3 text-base text-ink " +
+  // Niente `outline-none`: la classe di Tailwind vince per cascata sul
+  // `:focus-visible` globale e lascia i campi senza anello di focus, con il solo
+  // bordo da 1px a cambiare colore. Da tastiera diventa impossibile capire dove
+  // si è. Il focus ring del sito — 2px accent, offset 3px — qui deve arrivare
+  // intatto, e senza `outline-none` arriva: non serve ridichiararne il colore.
+  "transition-colors focus:border-accent";
 
-function ClockIcon() {
-  return (
-    <svg className="h-6 w-6 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg className="mx-auto h-10 w-10 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  );
-}
-
-function SendIcon() {
-  return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-    </svg>
-  );
-}
+/**
+ * `text-base` e non `text-sm`: sotto i 16px Safari su iOS ingrandisce la pagina
+ * a ogni focus, e su un modulo da cinque campi l'utente passa il tempo a
+ * rimettere a fuoco lo schermo.
+ */
 
 export function ContactPage({ locale }: { locale: Locale }) {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     topic: "medicina",
     message: "",
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
   const [showMap, setShowMap] = useState(false);
+
+  const set = (key: keyof typeof form) => (value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const topicLabel =
+    copy.form.topicOptions.find((o) => o.id === form.topic)?.label[locale] ??
+    form.topic;
+
+  const mailtoUrl = () => {
+    const subject = `${copy.form.mailSubject[locale]} — ${form.name}`.trim();
+    const body = [
+      `${copy.form.nameLabel[locale]}: ${form.name}`,
+      `${copy.form.emailLabel[locale]}: ${form.email}`,
+      `${copy.form.phoneLabel[locale]}: ${form.phone}`,
+      `${copy.form.topicLabel[locale]}: ${topicLabel}`,
+      "",
+      `${copy.form.messageLabel[locale]}:`,
+      form.message,
+    ].join("\n");
+
+    // La destinazione è l'e-mail dello studio. La versione precedente ci metteva
+    // `studio.phone`, cioè `mailto:+39 02 7202 3474`: un indirizzo che non
+    // esiste, quindi un modulo che non recapitava nulla mentre annunciava
+    // all'utente che il messaggio era partito.
+    return `mailto:${studio.email}?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
 
-    const endpoint = process.env.NEXT_PUBLIC_CONTACT_ENDPOINT;
+    if (!ENDPOINT) {
+      window.location.href = mailtoUrl();
+      setStatus("done");
+      return;
+    }
 
-    if (endpoint) {
-      try {
-        await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-        setSubmitted(true);
-      } catch (err) {
-        console.error("Form submit error", err);
-      } finally {
-        setSubmitting(false);
-      }
-    } else {
-      const subject = encodeURIComponent(`Richiesta informazioni dal sito: ${formData.name}`);
-      const body = encodeURIComponent(
-        `Nome: ${formData.name}\nEmail: ${formData.email}\nTelefono: ${formData.phone}\nArea: ${formData.topic}\n\nMessaggio:\n${formData.message}`
-      );
-      window.location.href = `mailto:${studio.phone}?subject=${subject}&body=${body}`;
-      setSubmitting(false);
-      setSubmitted(true);
+    setStatus("sending");
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      // `fetch` non solleva sugli status di errore: senza questo controllo un
+      // 500 verrebbe annunciato all'utente come invio riuscito.
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
     }
   };
-
-  const mailtoUrl = `mailto:${studio.phone}?subject=${encodeURIComponent(
-    `Richiesta dal sito: ${formData.name || "Visitatore"}`
-  )}&body=${encodeURIComponent(
-    `Nome: ${formData.name}\nEmail: ${formData.email}\nTelefono: ${formData.phone}\nArea: ${formData.topic}\n\nMessaggio:\n${formData.message}`
-  )}`;
 
   return (
     <>
       <SiteHeader locale={locale} routeKey="contact" variant="solid" />
 
       <main id="contenuto">
-        {/* HERO CONTATTI */}
+        {/* Apertura e azione. Il telefono sta in cima perché è il canale che
+            converte: prima la pagina si apriva su indirizzo, mezzi e orari, e
+            l'azione arrivava dopo tre schermate. */}
         <section className="wrap pt-14 md:pt-20">
           <Reveal>
             <p className="u-label text-ink-soft" data-reveal>
@@ -133,232 +122,294 @@ export function ContactPage({ locale }: { locale: Locale }) {
             <p className="u-lead mt-6 max-w-[50ch] text-ink" data-reveal>
               {copy.hero.subtitle[locale]}
             </p>
+
+            <div
+              className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
+              data-reveal
+            >
+              <a
+                href={`tel:${studio.phoneHref}`}
+                className="btn btn-solid u-label"
+              >
+                {studio.phone}
+              </a>
+              <a href={mailtoUrl()} className="link-rule u-label">
+                <span aria-hidden="true" className="rule" />
+                {ui.write[locale]}
+              </a>
+            </div>
+
+            <p className="u-body mt-6 max-w-[46ch] text-ink-soft" data-reveal>
+              {copy.action.note[locale]}
+            </p>
           </Reveal>
         </section>
 
-        {/* DETTAGLI STUDIO & FORM */}
-        <section className="wrap my-16 md:my-28">
+        {/* Lo studio. Filetti e tipografia, senza le icone della versione
+            precedente: il resto del sito non ne usa nessuna. */}
+        <section aria-labelledby="studio" className="wrap mt-20 md:mt-28">
           <Reveal>
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-              {/* SCHEDA DETTAGLI STUDIO */}
-              <div className="space-y-8 lg:col-span-5" data-reveal>
-                <div className="border border-line bg-surface p-8">
-                  <div className="flex items-start gap-4">
-                    <MapPinIcon />
-                    <div>
-                      <h3 className="u-label text-xs text-ink-soft">
-                        {copy.details.addressLabel[locale]}
-                      </h3>
-                      <p className="u-body mt-2 font-medium text-ink whitespace-pre-line">
-                        {copy.details.address[locale]}
-                      </p>
-                    </div>
-                  </div>
+            <div className="border-t border-line pt-12">
+              <h2 id="studio" className="u-label text-ink-soft" data-reveal>
+                {copy.details.title[locale]}
+              </h2>
 
-                  <div className="mt-6 flex items-start gap-4 border-t border-line/60 pt-6">
-                    <NavigationIcon />
-                    <div>
-                      <p className="u-body text-sm text-ink-soft">
-                        {copy.details.transport[locale]}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex items-start gap-4 border-t border-line/60 pt-6">
-                    <PhoneIcon />
-                    <div>
-                      <h3 className="u-label text-xs text-ink-soft">
-                        {copy.details.phoneLabel[locale]}
-                      </h3>
-                      <a
-                        href={`tel:${studio.phoneHref}`}
-                        className="u-body mt-1 block font-medium text-ink hover:text-accent"
-                      >
-                        {studio.phone}
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex items-start gap-4 border-t border-line/60 pt-6">
-                    <ClockIcon />
-                    <div>
-                      <h3 className="u-label text-xs text-ink-soft">
-                        {copy.details.hoursLabel[locale]}
-                      </h3>
-                      <p className="u-body mt-1 text-sm text-ink font-medium">
-                        {copy.details.hours[locale]}
-                      </p>
-                    </div>
-                  </div>
+              <dl
+                className="mt-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-8 lg:grid-cols-4"
+                data-reveal
+              >
+                <div>
+                  <dt className="u-label text-xs text-ink-soft">
+                    {copy.details.addressLabel[locale]}
+                  </dt>
+                  <dd className="u-body mt-2 whitespace-pre-line text-ink">
+                    {copy.details.address[locale]}
+                  </dd>
                 </div>
 
-                <div className="border border-line bg-surface p-6">
-                  <h3 className="u-label text-xs text-ink-soft">
-                    {copy.details.emailLabel[locale]}
-                  </h3>
-                  <p className="u-body mt-2 text-sm text-ink-soft">
-                    {copy.details.emailNotice[locale]}
-                  </p>
+                <div>
+                  <dt className="u-label text-xs text-ink-soft">
+                    {copy.details.transportLabel[locale]}
+                  </dt>
+                  <dd className="u-body mt-2 text-ink">
+                    {copy.details.transport[locale]}
+                  </dd>
                 </div>
-              </div>
 
-              {/* FORM DI CONTATTO */}
-              <div className="lg:col-span-7" data-reveal>
-                <div className="border border-line bg-surface p-8 md:p-10">
-                  <h2 className="u-label text-ink-soft">
-                    {copy.form.title[locale]}
-                  </h2>
-                  <p className="u-body mt-2 text-ink-soft">
-                    {copy.form.subtitle[locale]}
-                  </p>
-
-                  {submitted ? (
-                    <div className="mt-8 rounded border border-accent/30 bg-accent/5 p-6 text-center">
-                      <CheckCircleIcon />
-                      <p className="u-body mt-4 font-medium text-ink">
-                        {copy.form.successMessage[locale]}
-                      </p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-                      <div>
-                        <label className="u-label text-xs text-ink block mb-2">
-                          {copy.form.nameLabel[locale]} *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder={copy.form.namePlaceholder[locale]}
-                          className="w-full border border-line bg-ground px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <div>
-                          <label className="u-label text-xs text-ink block mb-2">
-                            {copy.form.emailLabel[locale]} *
-                          </label>
-                          <input
-                            type="email"
-                            required
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            placeholder={copy.form.emailPlaceholder[locale]}
-                            className="w-full border border-line bg-ground px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="u-label text-xs text-ink block mb-2">
-                            {copy.form.phoneLabel[locale]}
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            placeholder={copy.form.phonePlaceholder[locale]}
-                            className="w-full border border-line bg-ground px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="u-label text-xs text-ink block mb-2">
-                          {copy.form.topicLabel[locale]}
-                        </label>
-                        <select
-                          value={formData.topic}
-                          onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                          className="w-full border border-line bg-ground px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                        >
-                          {copy.form.topicOptions.map((opt) => (
-                            <option key={opt.id} value={opt.id}>
-                              {opt.label[locale]}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="u-label text-xs text-ink block mb-2">
-                          {copy.form.messageLabel[locale]} *
-                        </label>
-                        <textarea
-                          rows={4}
-                          required
-                          value={formData.message}
-                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                          placeholder={copy.form.messagePlaceholder[locale]}
-                          className="w-full border border-line bg-ground px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                        />
-                      </div>
-
-                      <p className="u-body text-xs text-ink-soft">
-                        {copy.form.privacyNotice[locale]}
-                      </p>
-
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                        <button
-                          type="submit"
-                          disabled={submitting}
-                          className="inline-flex items-center justify-center gap-3 bg-accent px-8 py-3.5 u-label text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                        >
-                          <SendIcon />
-                          <span>{copy.form.submitButton[locale]}</span>
-                        </button>
-
-                        <a
-                          href={mailtoUrl}
-                          className="inline-flex items-center justify-center gap-2 border border-line bg-ground px-5 py-3.5 u-label text-xs text-ink hover:border-accent"
-                        >
-                          <MailIcon />
-                          <span>{copy.form.mailtoFallbackButton[locale]}</span>
-                        </a>
-                      </div>
-                    </form>
-                  )}
+                <div>
+                  <dt className="u-label text-xs text-ink-soft">
+                    {copy.details.phoneLabel[locale]}
+                  </dt>
+                  <dd className="u-body mt-2 text-ink">
+                    <a
+                      href={`tel:${studio.phoneHref}`}
+                      className="flex min-h-11 items-center transition-colors hover:text-accent"
+                    >
+                      {studio.phone}
+                    </a>
+                  </dd>
                 </div>
-              </div>
+
+                <div>
+                  <dt className="u-label text-xs text-ink-soft">
+                    {copy.details.hoursLabel[locale]}
+                  </dt>
+                  <dd className="u-body mt-2 text-ink">
+                    {copy.details.hours[locale]}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </Reveal>
         </section>
 
-        {/* MAPPA PRIVACY-FIRST */}
-        <section className="wrap my-16 md:my-28">
+        {/* Modulo. */}
+        <section aria-labelledby="modulo" className="wrap mt-20 md:mt-28">
           <Reveal>
-            <div className="border-t border-line pt-12" data-reveal>
-              <h2 className="u-label text-ink-soft">
+            <div className="border-t border-line pt-12">
+              <h2 id="modulo" className="u-label text-ink-soft" data-reveal>
+                {copy.form.title[locale]}
+              </h2>
+              <p className="u-body mt-4 max-w-[60ch] text-ink-soft" data-reveal>
+                {ENDPOINT
+                  ? copy.form.subtitleEndpoint[locale]
+                  : copy.form.subtitle[locale]}
+              </p>
+
+              <noscript>
+                <p className="u-body mt-6 max-w-[60ch] border-l-2 border-accent pl-4 text-ink">
+                  {copy.form.noScript[locale]}
+                </p>
+              </noscript>
+
+              {/* `aria-live`: la conferma compare senza spostare il fuoco, e
+                  senza annuncio uno screen reader non saprebbe che è cambiato
+                  qualcosa. */}
+              <div aria-live="polite">
+                {status === "done" ? (
+                  <p
+                    className="u-body mt-8 max-w-[60ch] border-l-2 border-accent pl-4 text-ink"
+                    data-reveal
+                  >
+                    {ENDPOINT
+                      ? copy.form.doneEndpoint[locale]
+                      : copy.form.doneMailto[locale]}
+                  </p>
+                ) : null}
+                {status === "error" ? (
+                  <p className="u-body mt-8 max-w-[60ch] border-l-2 border-ink pl-4 text-ink">
+                    {copy.form.errorEndpoint[locale]}
+                  </p>
+                ) : null}
+              </div>
+
+              {status === "done" ? null : (
+                <form
+                  onSubmit={handleSubmit}
+                  className="mt-10 max-w-[46rem]"
+                  data-reveal
+                >
+                  {/* Ogni campo ha `id`, `htmlFor` e `name`. Prima non ne aveva
+                      nessuno dei tre: uno screen reader annunciava cinque
+                      controlli senza nome, e il modulo era di fatto inutilizzabile
+                      senza vederlo. `autoComplete` risparmia la digitazione su
+                      telefono. */}
+                  <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:gap-x-8">
+                    <p className="sm:col-span-2">
+                      <label htmlFor="nome" className="u-label text-xs text-ink">
+                        {copy.form.nameLabel[locale]}
+                      </label>
+                      <input
+                        id="nome"
+                        name="nome"
+                        type="text"
+                        required
+                        autoComplete="name"
+                        value={form.name}
+                        onChange={(e) => set("name")(e.target.value)}
+                        className={FIELD}
+                      />
+                    </p>
+
+                    <p>
+                      <label
+                        htmlFor="email"
+                        className="u-label text-xs text-ink"
+                      >
+                        {copy.form.emailLabel[locale]}
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        autoComplete="email"
+                        value={form.email}
+                        onChange={(e) => set("email")(e.target.value)}
+                        className={FIELD}
+                      />
+                    </p>
+
+                    <p>
+                      <label
+                        htmlFor="telefono"
+                        className="u-label text-xs text-ink"
+                      >
+                        {copy.form.phoneLabel[locale]}{" "}
+                        <span className="text-ink-soft lowercase tracking-normal">
+                          ({copy.form.phoneHint[locale].toLowerCase()})
+                        </span>
+                      </label>
+                      <input
+                        id="telefono"
+                        name="telefono"
+                        type="tel"
+                        autoComplete="tel"
+                        value={form.phone}
+                        onChange={(e) => set("phone")(e.target.value)}
+                        className={FIELD}
+                      />
+                    </p>
+
+                    <p className="sm:col-span-2">
+                      <label htmlFor="area" className="u-label text-xs text-ink">
+                        {copy.form.topicLabel[locale]}
+                      </label>
+                      <select
+                        id="area"
+                        name="area"
+                        value={form.topic}
+                        onChange={(e) => set("topic")(e.target.value)}
+                        className={FIELD}
+                      >
+                        {copy.form.topicOptions.map((opt) => (
+                          <option key={opt.id} value={opt.id}>
+                            {opt.label[locale]}
+                          </option>
+                        ))}
+                      </select>
+                    </p>
+
+                    <p className="sm:col-span-2">
+                      <label
+                        htmlFor="messaggio"
+                        className="u-label text-xs text-ink"
+                      >
+                        {copy.form.messageLabel[locale]}
+                      </label>
+                      <textarea
+                        id="messaggio"
+                        name="messaggio"
+                        rows={5}
+                        required
+                        value={form.message}
+                        onChange={(e) => set("message")(e.target.value)}
+                        className={FIELD}
+                      />
+                    </p>
+                  </div>
+
+                  <p className="u-body mt-8 max-w-[60ch] text-xs text-ink-soft">
+                    {ENDPOINT
+                      ? copy.form.privacyEndpoint[locale]
+                      : copy.form.privacyMailto[locale]}
+                  </p>
+
+                  <button
+                    type="submit"
+                    disabled={status === "sending"}
+                    className="btn btn-solid u-label mt-8 disabled:opacity-60"
+                  >
+                    {status === "sending"
+                      ? copy.form.submitting[locale]
+                      : ENDPOINT
+                        ? copy.form.submitEndpoint[locale]
+                        : copy.form.submitMailto[locale]}
+                  </button>
+                </form>
+              )}
+            </div>
+          </Reveal>
+        </section>
+
+        {/* Mappa, caricata solo al clic. */}
+        <section aria-labelledby="mappa" className="wrap my-20 md:my-28">
+          <Reveal>
+            <div className="border-t border-line pt-12">
+              <h2 id="mappa" className="u-label text-ink-soft" data-reveal>
                 {copy.map.title[locale]}
               </h2>
 
-              <div className="mt-8 border border-line bg-surface p-8 text-center">
-                {!showMap ? (
-                  <div className="mx-auto max-w-[50ch] py-8">
-                    <MapPinIcon />
-                    <p className="u-body mt-4 text-sm text-ink-soft">
+              <div className="mt-8 max-w-[60ch]" data-reveal>
+                {showMap ? (
+                  <div className="relative aspect-video w-full overflow-hidden border border-line">
+                    <iframe
+                      title={copy.map.iframeTitle[locale]}
+                      width="100%"
+                      height="100%"
+                      loading="lazy"
+                      // Riquadro centrato sulle coordinate reali di Via Andegari 18,
+                      // prese da Nominatim e non stimate a occhio.
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${
+                        studio.lon - 0.004
+                      }%2C${studio.lat - 0.003}%2C${studio.lon + 0.004}%2C${
+                        studio.lat + 0.003
+                      }&layer=mapnik&marker=${studio.lat}%2C${studio.lon}`}
+                      className="border-0"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <p className="u-body text-ink-soft">
                       {copy.map.privacyNote[locale]}
                     </p>
                     <button
                       onClick={() => setShowMap(true)}
-                      className="mt-6 inline-flex items-center gap-2 bg-accent px-6 py-3 u-label text-white transition-opacity hover:opacity-90"
+                      className="btn btn-solid u-label mt-6"
                     >
-                      <MapPinIcon />
-                      <span>{copy.map.loadButton[locale]}</span>
+                      {copy.map.loadButton[locale]}
                     </button>
-                  </div>
-                ) : (
-                  <div className="relative aspect-video w-full overflow-hidden border border-line">
-                    <iframe
-                      title="Studio Medico Dr. Roberto Dell'Avanzato Milano"
-                      width="100%"
-                      height="100%"
-                      loading="lazy"
-                      src="https://www.openstreetmap.org/export/embed.html?bbox=9.1870%2C45.4660%2C9.1950%2C45.4720&amp;layer=mapnik&amp;marker=45.4690%2C9.1910"
-                      className="border-0"
-                    />
-                  </div>
+                  </>
                 )}
               </div>
             </div>

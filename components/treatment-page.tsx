@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BookingCta } from "@/components/booking-cta";
 import { JsonLd } from "@/components/json-ld";
 import { RegMark } from "@/components/reg-mark";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { CARD_GRID, TreatmentCard } from "@/components/treatment-card";
-import { navLabel, studio, ui } from "@/content/site";
+import { navLabel } from "@/content/site";
 import {
   OPENING_WITHHELD,
   treatmentPage as copy,
@@ -171,36 +172,9 @@ export function TreatmentPage({
           </Reveal>
         </section>
 
-        <section
-          aria-labelledby="prenota"
-          className="on-dark mt-24 bg-dark md:mt-32"
-        >
-          <Reveal className="section wrap">
-            <h2 id="prenota" className="u-label text-invert-soft" data-reveal>
-              {copy.bookingKicker[locale]}
-            </h2>
-            <p className="u-lead mt-6 max-w-[34ch] text-invert" data-reveal>
-              {copy.bookingLead[locale]}
-            </p>
-            <div
-              className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 md:mt-12"
-              data-reveal
-            >
-              <Link
-                href={href("contact", locale)}
-                className="btn btn-outline-invert u-label"
-              >
-                {ui.book[locale]}
-              </Link>
-              <a
-                href={`tel:${studio.phoneHref}`}
-                className="u-label flex min-h-11 items-center text-invert-soft transition-colors hover:text-accent-bright"
-              >
-                {studio.phone}
-              </a>
-            </div>
-          </Reveal>
-        </section>
+        {/* Estratto in `components/booking-cta.tsx`: la stessa chiusura serve a
+            biografia e rassegna stampa, che prima non ne avevano nessuna. */}
+        <BookingCta locale={locale} />
       </main>
 
       <SiteFooter locale={locale} />

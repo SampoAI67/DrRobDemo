@@ -67,8 +67,14 @@ export function SiteHeader({ locale, routeKey, slug, variant = "solid" }: Props)
 
       <nav aria-label={ui.mainNav[locale]}>
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 md:gap-x-8">
+          {/* «Biografia» era `hidden sm:block`, cioè assente dal menu sotto i
+              640px. In un settore in cui recensioni, prezzi e prima/dopo sono
+              vietati, la biografia è la prova sociale ammessa: nasconderla
+              proprio dove passa la maggioranza del traffico toglieva dal menu la
+              pagina che costruisce la fiducia. La testata va a capo, e va bene:
+              `flex-wrap` è lì apposta. */}
           {NAV_KEYS.map((key) => (
-            <li key={key} className={key === "biography" ? "hidden sm:block" : undefined}>
+            <li key={key}>
               <Link href={href(key, locale)} className={link}>
                 {navLabel[key][locale]}
               </Link>

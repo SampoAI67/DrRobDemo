@@ -1,54 +1,34 @@
-"use client";
-
-import { useState } from "react";
+import { BookingCta } from "@/components/booking-cta";
 import { JsonLd } from "@/components/json-ld";
 import { RegMark } from "@/components/reg-mark";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { pressContent as copy } from "@/content/press";
 import { navLabel } from "@/content/site";
-import { pressContent as copy, type PressItem } from "@/content/press";
+import { asset } from "@/lib/asset";
 import type { Locale } from "@/lib/i18n";
 import { href } from "@/lib/routes";
 import { breadcrumbList } from "@/lib/structured-data";
 
-function FileTextIcon() {
-  return (
-    <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    </svg>
-  );
-}
-
-function ExternalLinkIcon() {
-  return (
-    <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-    </svg>
-  );
-}
-
-function NewspaperIcon() {
-  return (
-    <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6m-6 4h6" />
-    </svg>
-  );
-}
-
+/**
+ * Rassegna stampa: i sette articoli pubblicati, con il PDF di ciascuno.
+ *
+ * Non è più un client component. Prima teneva uno stato per cinque filtri —
+ * «Stampa & Riviste», «Interviste & Media», «Congressi & Atti», «Studi Clinici»
+ * — costruiti su categorie che erano state inventate insieme al resto del
+ * contenuto. Sette voci omogenee non hanno bisogno di essere filtrate: la
+ * pulsantiera aggiungeva cinque bersagli da 32px e un motivo per sbagliare.
+ *
+ * I titoli vanno in tondo, non in `u-label`: sono citazioni lunghe fino a tre
+ * righe, e in maiuscolo spaziato diventano paragrafi da decifrare.
+ */
 export function PressPage({ locale }: { locale: Locale }) {
-  const [filter, setFilter] = useState<string>("all");
-
-  const filteredItems = filter === "all"
-    ? copy.items
-    : copy.items.filter((item) => item.category === filter);
-
   return (
     <>
       <SiteHeader locale={locale} routeKey="press" variant="solid" />
 
       <main id="contenuto">
-        {/* HERO PRESS */}
         <section className="wrap pt-14 md:pt-20">
           <Reveal>
             <p className="u-label text-ink-soft" data-reveal>
@@ -60,93 +40,65 @@ export function PressPage({ locale }: { locale: Locale }) {
             <p className="u-lead mt-6 max-w-[50ch] text-ink" data-reveal>
               {copy.hero.subtitle[locale]}
             </p>
-
-            {/* FILTRI TIPOLOGIA */}
-            <div className="mt-12 border-t border-line pt-8" data-reveal>
-              <div className="flex flex-wrap gap-3">
-                {Object.entries(copy.filters).map(([key, label]) => {
-                  const isActive = filter === key;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => setFilter(key)}
-                      className={`u-label px-4 py-2 text-xs transition-colors ${
-                        isActive
-                          ? "bg-accent text-white"
-                          : "border border-line bg-surface text-ink hover:border-accent hover:text-accent"
-                      }`}
-                    >
-                      {label[locale]}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            {/* In italiano la nota è vuota: i documenti sono già nella lingua
+                del lettore, e dirlo sarebbe rumore. */}
+            {copy.languageNote[locale] ? (
+              <p className="u-body mt-4 text-ink-soft" data-reveal>
+                {copy.languageNote[locale]}
+              </p>
+            ) : null}
           </Reveal>
         </section>
 
-        {/* ELENCO PUBBLICAZIONI / RASSEGNA STAMPA */}
-        <section className="wrap my-16 md:my-24">
+        <section className="wrap mt-16 md:mt-20">
           <Reveal>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {filteredItems.map((item: PressItem) => (
-                <article
-                  key={item.id}
-                  className="flex flex-col justify-between border border-line bg-surface p-7 transition-all duration-300 hover:border-accent"
-                  data-reveal
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="u-label text-xs text-accent">
-                        {item.source}
-                      </span>
-                      <span className="u-label text-xs text-ink-soft">
-                        {item.date}
-                      </span>
-                    </div>
+            <ul className="grid grid-cols-1 gap-x-4 gap-y-12 border-t border-line pt-12 md:grid-cols-2 md:gap-x-8 lg:grid-cols-3">
+              {copy.items.map((item) => (
+                <li key={item.id} data-reveal>
+                  <article className="flex h-full flex-col">
+                    {/* `lang="it"`: i titoli restano nella lingua del documento
+                        anche nella versione inglese — sono citazioni, non copy —
+                        e la sintesi vocale deve pronunciarli in italiano. */}
+                    <h2
+                      lang="it"
+                      className="u-statement text-ink"
+                      id={`art-${item.id}`}
+                    >
+                      <RegMark>{item.title}</RegMark>
+                    </h2>
 
-                    <h3 className="u-label mt-6 text-base font-semibold text-ink leading-snug">
-                      <RegMark>{item.title[locale]}</RegMark>
-                    </h3>
-
-                    <p className="u-body mt-4 text-sm text-ink-soft">
-                      <RegMark>{item.description[locale]}</RegMark>
+                    <p className="u-body mt-4 grow text-ink-soft">
+                      <RegMark>{item.standfirst[locale]}</RegMark>
                     </p>
-                  </div>
 
-                  <div className="mt-8 pt-4 border-t border-line/60">
-                    {item.file ? (
+                    <p className="mt-6 border-t border-line pt-4">
                       <a
-                        href={`/app/uploads/2019/11/${item.file}`}
+                        href={asset(`/stampa/${item.file}`)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-medium u-label text-accent hover:underline"
+                        // L'etichetta è la stessa su sette schede: senza
+                        // `aria-labelledby` un elenco di link estratto da uno
+                        // screen reader direbbe sette volte «Leggi l'articolo».
+                        aria-labelledby={`art-${item.id} leggi-${item.id}`}
+                        id={`leggi-${item.id}`}
+                        className="link-rule u-label"
                       >
-                        <FileTextIcon />
-                        <span>{copy.actions.readPdf[locale]}</span>
+                        <span aria-hidden="true" className="rule" />
+                        {copy.actions.readPdf[locale]}
+                        <span className="text-ink-soft">
+                          ({copy.actions.pdfMeta[locale]})
+                        </span>
                       </a>
-                    ) : item.url ? (
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-medium u-label text-accent hover:underline"
-                      >
-                        <ExternalLinkIcon />
-                        <span>{copy.actions.viewArticle[locale]}</span>
-                      </a>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 text-xs u-label text-ink-soft">
-                        <NewspaperIcon />
-                        <span>{copy.actions.proceedings[locale]}</span>
-                      </span>
-                    )}
-                  </div>
-                </article>
+                    </p>
+                  </article>
+                </li>
               ))}
-            </div>
+            </ul>
           </Reveal>
         </section>
+
+        {/* La pagina finiva qui, senza nessuna via d'uscita se non il footer. */}
+        <BookingCta locale={locale} />
       </main>
 
       <SiteFooter locale={locale} />

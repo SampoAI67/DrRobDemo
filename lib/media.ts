@@ -5,12 +5,11 @@
  * la variante giusta la sceglie il loader di next/image leggendo `lib/image-variants.ts`.
  */
 
+import { asset } from "@/lib/asset";
 import { VARIANTS } from "@/lib/image-variants";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (process.env.GITHUB_ACTIONS ? "/DrRobDemo" : "");
-
 export function media(name: string): string {
-  return `${basePath}/media/${name}.webp`;
+  return asset(`/media/${name}.webp`);
 }
 
 /**
@@ -22,5 +21,5 @@ export function mediaFile(name: string, width?: number): string {
   const picked =
     (width === undefined ? undefined : widths.find((w) => w >= width)) ??
     widths[widths.length - 1];
-  return `${basePath}/media/${name}-${picked}.webp`;
+  return asset(`/media/${name}-${picked}.webp`);
 }

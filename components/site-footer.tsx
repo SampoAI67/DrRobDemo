@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { href, NAV_KEYS } from "@/lib/routes";
-import { navLabel, ui } from "@/content/site";
+import { navLabel, studio, ui } from "@/content/site";
 
 type Props = {
   locale: Locale;
@@ -32,9 +32,21 @@ export function SiteFooter({ locale, variant = "standalone" }: Props) {
         </ul>
       </nav>
 
-      <Link href={href("contact", locale)} className="btn btn-solid u-label self-start">
-        {ui.book[locale]}
-      </Link>
+      {/* Il numero accanto al bottone. È il footer di ogni pagina, quindi è
+          questo che dà il click-to-call ovunque: prima un `tel:` esisteva solo
+          sulla pagina contatti e sulle schede trattamento, e su telefono è
+          l'azione che converte di più. */}
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+        <Link href={href("contact", locale)} className="btn btn-solid u-label">
+          {ui.book[locale]}
+        </Link>
+        <a
+          href={`tel:${studio.phoneHref}`}
+          className="u-label flex min-h-11 items-center text-ink-soft transition-colors hover:text-accent"
+        >
+          {studio.phone}
+        </a>
+      </div>
     </div>
   );
 
