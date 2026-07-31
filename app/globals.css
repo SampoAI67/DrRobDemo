@@ -26,6 +26,10 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Rende interpolabili le parole chiave dimensionali — serve a far animare
+       `block-size: auto` sugli accordion dell'elenco per zona (vedi
+       `.zone-accordion`). Dove non è supportata viene ignorata. */
+    interpolate-size: allow-keywords;
   }
 
   body {
@@ -226,6 +230,60 @@
   .btn-outline-invert:hover {
     background-color: var(--color-invert);
     color: var(--color-ink);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Elenco per zona — segno di apertura degli accordion
+   *
+   * Regola esplicita al posto del variant `group-open:rotate-45`, che richiede
+   * anche una classe `group` sul `<details>`: qui lo stato aperto è già
+   * espresso dal selettore nativo, e una riga di CSS si legge meglio di una
+   * coppia classe-variante sparsa su due elementi. Il variant funzionava:
+   * l'avevo creduto rotto per una misura sbagliata — `getComputedStyle` su una
+   * proprietà in transizione restituisce il valore corrente, non quello finale.
+   * ------------------------------------------------------------------ */
+  .zone-mark {
+    display: inline-block;
+    transition: rotate 220ms ease-out;
+  }
+
+  details[open] > summary .zone-mark {
+    rotate: 45deg;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Apertura animata degli accordion
+   *
+   * `<details>` non anima l'altezza da solo. Si anima `::details-content`, il
+   * pseudo-elemento che avvolge tutto ciò che non è il `<summary>`:
+   *
+   * - `interpolate-size: allow-keywords` è ciò che rende interpolabile
+   *   `block-size: auto`. Senza, l'unica strada sarebbe fissare un'altezza in
+   *   pixel — che qui non si può, le zone vanno da 3 a 32 voci — oppure
+   *   misurarla in JavaScript, e l'accordion smetterebbe di funzionare senza.
+   * - `content-visibility` va nella transizione con `allow-discrete`: è una
+   *   proprietà discreta, e senza quella parola il contenuto sparirebbe al
+   *   primo frame della chiusura, lasciando animare un riquadro vuoto.
+   *
+   * Chi non supporta `::details-content` semplicemente non applica nulla e
+   * l'accordion si apre di scatto, come prima: nessuna regressione.
+   *
+   * Le durate del movimento ridotto le azzera già il blocco
+   * `prefers-reduced-motion` in fondo al foglio.
+   * ------------------------------------------------------------------ */
+  .zone-accordion::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      block-size 300ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 200ms ease-out,
+      content-visibility 300ms allow-discrete;
+  }
+
+  .zone-accordion[open]::details-content {
+    block-size: auto;
+    opacity: 1;
   }
 
   /* Link testuale con filetto che si estende all'hover. */

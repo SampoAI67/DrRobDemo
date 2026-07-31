@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { BookingCta } from "@/components/booking-cta";
 import { JsonLd } from "@/components/json-ld";
+import { TreatmentDirectory } from "@/components/treatment-directory";
 import { RegMark } from "@/components/reg-mark";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
@@ -102,6 +104,11 @@ export function TreatmentsIndex({ locale }: { locale: Locale }) {
             </section>
           ))}
         </div>
+
+        {/* Le 233 voci di listino, sotto alle 19 schede. */}
+        <TreatmentDirectory locale={locale} />
+
+        <BookingCta locale={locale} />
       </main>
 
       <SiteFooter locale={locale} />
