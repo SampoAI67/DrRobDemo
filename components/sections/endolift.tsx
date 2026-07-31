@@ -59,10 +59,39 @@ const STRENGTH = 0.58;
  * `parallax` è l'ampiezza in px della deriva legata allo scroll: valori diversi
  * fanno scorrere le tre immagini a velocità diverse.
  */
+/**
+ * `from`/`to` sono la traslazione verticale in px agli estremi della corsa: a
+ * `from` quando la sezione entra dal basso, a `to` quando esce dall'alto.
+ *
+ * Non è una coppia simmetrica per capriccio. Le prime due salgono, la terza
+ * **scende**: se scendesse anche lei — cioè se salisse come le altre — si
+ * avvicinerebbe al link «La metodica Endolift®», e quel link ha 0,38 di margine
+ * sulla soglia AA (vedi `MOBILE_OPACITY`). Misurato sulla versione precedente,
+ * col terzo elemento in salita il varco fra immagine e link passava da 53 a 2px
+ * nel corso dello scroll. Facendola scendere il varco si allarga invece di
+ * chiudersi, e in più la contro-direzione rende la parallasse molto più
+ * leggibile di tre immagini che scorrono insieme.
+ *
+ * La corsa di ogni immagine è verificata a otto posizioni di scroll da
+ * `tools/contrast-endolift.py`: con le immagini in movimento il contrasto non è
+ * più una proprietà di una schermata, ma di tutto lo scorrimento.
+ */
 const MOBILE = [
-  { position: "left-[-4%] top-[1%] w-[44%] max-w-[10.5rem]", parallax: 34 },
-  { position: "right-[-3%] top-[19%] w-[37%] max-w-[8.75rem]", parallax: 16 },
-  { position: "bottom-[1%] left-[9%] w-[40%] max-w-[9.5rem]", parallax: 26 },
+  {
+    position: "left-[-4%] top-[1%] w-[44%] max-w-[10.5rem]",
+    from: 54,
+    to: -54,
+  },
+  {
+    position: "right-[-3%] top-[19%] w-[37%] max-w-[8.75rem]",
+    from: 30,
+    to: -30,
+  },
+  {
+    position: "bottom-[1%] left-[9%] w-[40%] max-w-[9.5rem]",
+    from: -8,
+    to: 56,
+  },
 ];
 
 /**
@@ -130,9 +159,9 @@ export function Endolift({ locale }: { locale: Locale }) {
 
           gsap.fromTo(
             el,
-            { y: MOBILE[i].parallax },
+            { y: MOBILE[i].from },
             {
-              y: -MOBILE[i].parallax,
+              y: MOBILE[i].to,
               ease: "none",
               scrollTrigger: {
                 trigger: root,
