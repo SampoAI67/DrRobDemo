@@ -62,22 +62,6 @@ export const endolift = {
   cta: { it: "La metodica Endolift®", en: "The Endolift® method" },
 } satisfies Record<string, Localized<string>>;
 
-/** Testi alternativi del cluster fluttuante della S5, nell'ordine delle immagini. */
-export const endoliftClusterAlt: Localized<string>[] = [
-  {
-    it: "Fibra laser impiegata nella metodica Endolift®",
-    en: "Laser fibre used in the Endolift® method",
-  },
-  {
-    it: "Dispositivo laser in studio",
-    en: "Laser device at the practice",
-  },
-  {
-    it: "Il dott. Dell’Avanzato durante un intervento",
-    en: "Dr Dell’Avanzato during a procedure",
-  },
-];
-
 export const method = {
   kicker: { it: "Il metodo", en: "The method" },
 } satisfies Record<string, Localized<string>>;
